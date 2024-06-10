@@ -87,3 +87,16 @@
   background: transparent;
   /* Hace que la barra de desplazamiento sea transparente */
 }
+
+.circle {
+  width: 2000px;
+    /* Tamaño más grande para mayor difuminado */
+  height: 2000px;
+  /* Tamaño más grande para mayor difuminado */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.1) 60%, rgba(255, 255, 255, 0.05) 67%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 50%;
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0.2;
+}
