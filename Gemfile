@@ -77,3 +77,5 @@ group :test do
 end
 
 gem "cloudinary"
+# Use jquery as the JavaScript librar
+gem 'jquery-rails'

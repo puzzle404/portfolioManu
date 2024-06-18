@@ -11,3 +11,6 @@
 #borramos las categorias
 
 Skill.destroy_all
+Skill::SKILLS.each do |skill|
+  Skill.create!(name: skill)
+end
