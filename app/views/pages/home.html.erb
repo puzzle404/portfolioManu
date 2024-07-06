@@ -1,8 +1,6 @@
-<div class="circle"></div>
-
 <div class="container main-content">
 	<div class="row g-2 h-100 flex-wrap">
-		<div class="col-lg-6 col-md-6 col-sm-12 left-column" >
+		<div class="col-lg-6 col-md-6 col-sm-12 left-column" style='overflow: hidden'>
 			<div class="d-flex flex-column h-100 min-vh-100">
 				<div class="div">
 					<h1 class="main-heading">Manuel Ferrer</h1>
@@ -11,85 +9,65 @@
 				</div>
 
 				<nav class="nav flex-column mt-5">
-					<a class="nav-link active" href="#about">ABOUT</a>
-          <a class="nav-link" href="#experience">EXPERIENCE</a>
-          <a class="nav-link" href="#projects">PROJECTS</a>
+					<a class="nav-link active" href="#about" data-turbo-false>ABOUT</a>
+          <a class="nav-link" href="#experience" data-turbo-false>EXPERIENCE</a>
+          <a class="nav-link" href="#projects" data-turbo-false>PROJECTS</a>
 				</nav>
 				<div class="d-flex align-items-end h-100">
 					<div class="social-icons mt-auto">
-						<i class="fab fa-github"></i>
-						<i class="fab fa-linkedin"></i>
-						<i class="fab fa-codepen"></i>
-						<i class="fab fa-instagram"></i>
-						<i class="fab fa-xing"></i>
-						<i class="fab fa-goodreads"></i>
+            <%= link_to "https://github.com/puzzle404", target: "_blank" do %>
+						  <i class="fab fa-github"></i>
+            <% end %>
+						<%= link_to "https://www.linkedin.com/in/ferrer-manuel/", target: "_blank" do %>
+              <i class="fab fa-linkedin"></i>
+            <% end %>
+						<%= link_to "https://x.com/cmanuferrer" do %>
+              <i class="fa-brands fa-twitter"></i>
+            <% end %>
+						<%= link_to "https://www.instagram.com/cmanuferrer/", target: "_blank" do %>
+              <i class="fab fa-instagram"></i>
+            <% end %>
+						<%= link_to "https://www.facebook.com/cmanuferrer" do %>
+              <i class="fa-brands fa-facebook"></i>
+            <% end %>
+						<%#= link_to "" do %>
+              <%# <i class="fab fa-goodreads"></i> %>
+            <%# end %>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="col-lg-6 col-md-6 col-sm-12 right-column">
-			<div class="description" id='about'>
-				<p>Back in 2012, I decided to try my hand at creating custom Tumblr themes and tumbled head first into the rabbit hole of coding and web development. Fast-forward to today, and I've had the privilege of building software for an <strong>advertising agency</strong>, a <strong>start-up</strong>, a <strong>huge corporation</strong>, and a <strong>digital product studio</strong>.</p>
-				<p>My main focus these days is building accessible user interfaces for our customers at <strong>Klaviyo</strong>. I most enjoy building software in the sweet spot where design and engineering meet — things that look good but are also built well under the hood. In my free time, I've also released an <strong>online video course</strong> that covers everything you need to know to build a web app with the Spotify API.</p>
-				<p>When I’m not at the computer, I’m usually rock climbing, reading, hanging out with my wife and two cats, or running around Hyrule searching for <strong>Korok seeds</strong>.</p>
+			<div class="description mx-2" id='about'>
+
+				<p>Passionate about technology, I motivate myself daily to expand my knowledge. My goal is to take my skills as a Full Stack Web Developer a step further, continuously learn, and above all, generate value with enthusiasm and commitment.</p>
+				<p>I am Full-Stack Web Developer with strong technical skills as a Ruby on Rails developer, as well as SQL and MySQL for databases. I am well-versed in front-end technologies such as HTML, CSS, and JavaScript, and have experience with modern frameworks like Stimulus and Hotwire. Additionally, I have experience deploying applications in the cloud using platforms like Heroku, and in creating and consuming REST APIs for service integration. My testing skills include using tools like RSpec, Capybara, and Selenium to ensure code quality.</p>
+        <p>
+          My entrepreneurial background includes founding an audiovisual production services company, serving both corporate and independent clients, and the role of partner-coordinator in real estate projects. These experiences have strengthened my teamwork skills.
+        </p>
 			</div>
+
+			<div class="experience-section mb-5" id='projects'>
+        <% @projects.each do |project| %>
+          <%= link_to project_path(project), class: 'text-decoration-none color-w' do %>
+            <div class="experience-item">
+              <% project.photos.each do |photo| %>
+                <%#= cl_image_tag photo.key, height: 300, width: 400, crop: :fill %>
+              <% end %>
+              <h4><%= project.name %></h4>
+              <h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5>
+              <p>Build and maintain critical components used to construct Klaviyo’s frontend, across the whole product. Work closely with cross-functional teams, including developers, designers, and product managers, to implement and advocate for best practices in web accessibility.</p>
+              <% project.skills.each do |skill| %>
+                <span class="badge my-1"><%= skill.name %></span>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+			</div>
+
 
 			<div class="experience-section mb-5" id='experience'>
-				<div class="experience-item">
-					<h4>2024 — PRESENT</h4>
-					<h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5>
-					<p>Build and maintain critical components used to construct Klaviyo’s frontend, across the whole product. Work closely with cross-functional teams, including developers, designers, and product managers, to implement and advocate for best practices in web accessibility.</p>
-					<span class="badge">JavaScript</span>
-					<span class="badge">TypeScript</span>
-					<span class="badge">React</span>
-					<span class="badge">Storybook</span>
-				</div>
-			</div>
-
-			<div class="description" id='projects'>
-				<p>Back in 2012, I decided to try my hand at creating custom Tumblr themes and tumbled head first into the rabbit hole of coding and web development. Fast-forward to today, and I've had the privilege of building software for an <strong>advertising agency</strong>, a <strong>start-up</strong>, a <strong>huge corporation</strong>, and a <strong>digital product studio</strong>.</p>
-				<p>My main focus these days is building accessible user interfaces for our customers at <strong>Klaviyo</strong>. I most enjoy building software in the sweet spot where design and engineering meet — things that look good but are also built well under the hood. In my free time, I've also released an <strong>online video course</strong> that covers everything you need to know to build a web app with the Spotify API.</p>
-				<p>When I’m not at the computer, I’m usually rock climbing, reading, hanging out with my wife and two cats, or running around Hyrule searching for <strong>Korok seeds</strong>.</p>
-			</div>
-
-			<div class="experience-section mb-5">
-				<div class="experience-item">
-					<h4>2024 — PRESENT</h4>
-					<h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5>
-					<p>Build and maintain critical components used to construct Klaviyo’s frontend, across the whole product. Work closely with cross-functional teams, including developers, designers, and product managers, to implement and advocate for best practices in web accessibility.</p>
-					<span class="badge">JavaScript</span>
-					<span class="badge">TypeScript</span>
-					<span class="badge">React</span>
-					<span class="badge">Storybook</span>
-				</div>
-			</div>
-
-			<div class="description">
-				<p>Back in 2012, I decided to try my hand at creating custom Tumblr themes and tumbled head first into the rabbit hole of coding and web development. Fast-forward to today, and I've had the privilege of building software for an <strong>advertising agency</strong>, a <strong>start-up</strong>, a <strong>huge corporation</strong>, and a <strong>digital product studio</strong>.</p>
-				<p>My main focus these days is building accessible user interfaces for our customers at <strong>Klaviyo</strong>. I most enjoy building software in the sweet spot where design and engineering meet — things that look good but are also built well under the hood. In my free time, I've also released an <strong>online video course</strong> that covers everything you need to know to build a web app with the Spotify API.</p>
-				<p>When I’m not at the computer, I’m usually rock climbing, reading, hanging out with my wife and two cats, or running around Hyrule searching for <strong>Korok seeds</strong>.</p>
-			</div>
-
-			<div class="experience-section mb-5">
-				<div class="experience-item">
-					<h4>2024 — PRESENT</h4>
-					<h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5>
-					<p>Build and maintain critical components used to construct Klaviyo’s frontend, across the whole product. Work closely with cross-functional teams, including developers, designers, and product managers, to implement and advocate for best practices in web accessibility.</p>
-					<span class="badge">JavaScript</span>
-					<span class="badge">TypeScript</span>
-					<span class="badge">React</span>
-					<span class="badge">Storybook</span>
-				</div>
-			</div>
-
-			<div class="description">
-				<p>Back in 2012, I decided to try my hand at creating custom Tumblr themes and tumbled head first into the rabbit hole of coding and web development. Fast-forward to today, and I've had the privilege of building software for an <strong>advertising agency</strong>, a <strong>start-up</strong>, a <strong>huge corporation</strong>, and a <strong>digital product studio</strong>.</p>
-				<p>My main focus these days is building accessible user interfaces for our customers at <strong>Klaviyo</strong>. I most enjoy building software in the sweet spot where design and engineering meet — things that look good but are also built well under the hood. In my free time, I've also released an <strong>online video course</strong> that covers everything you need to know to build a web app with the Spotify API.</p>
-				<p>When I’m not at the computer, I’m usually rock climbing, reading, hanging out with my wife and two cats, or running around Hyrule searching for <strong>Korok seeds</strong>.</p>
-			</div>
-
-			<div class="experience-section mb-5">
 				<div class="experience-item">
 					<h4>2024 — PRESENT</h4>
 					<h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5>

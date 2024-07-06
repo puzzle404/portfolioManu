@@ -1,5 +1,6 @@
 <%= simple_form_for(project, data: {controller: 'select2'}) do |f| %>
   <!-- [...] -->
+  <%= f.input :name, label: 'Name' %>
   <%= f.input :photos, as: :file, label: 'Photos', input_html: { multiple: true  } %>
   <%= f.input :skill_ids, label: 'Skills', collection: Skill.all, as: :select, input_html: { multiple: true, id: 'tom-select-it' } %>
   <%= f.input :description, label: 'Description' %>

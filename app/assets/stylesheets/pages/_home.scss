@@ -33,10 +33,32 @@
 }
 
 
+.experience-item {
+  padding: 10px;
+}
 
 
 .experience-item h4 {
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.color-w {
+  color: white;
+}
+
+.experience-item:hover {
   color: #64ffda;
+  // box-shadow: 0 8px 16px rgba(48, 42, 40, -0.9), 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  background: rgba(90, 90, 90, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Fondo más opaco en hover */
+  backdrop-filter: blur(15px);
+  /* Aumentar el desenfoque en hover */
 }
 
 .experience-item p {
@@ -86,17 +108,4 @@
   /* Elimina la barra de desplazamiento en Webkit (Safari y Chrome) */
   background: transparent;
   /* Hace que la barra de desplazamiento sea transparente */
-}
-
-.circle {
-  width: 3000px;
-    /* Tamaño más grande para mayor difuminado */
-  height: 3000px;
-  /* Tamaño más grande para mayor difuminado */
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.1) 60%, rgba(255, 255, 255, 0.05) 67%, rgba(255, 255, 255, 0) 100%);
-  border-radius: 50%;
-  position: absolute;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  opacity: 0.2;
 }

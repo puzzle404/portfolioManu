@@ -14,8 +14,33 @@
 
 
 body {
-  background-color: #0a192f;
+  background-color: rgba(15, 23, 42, 1);
   color: #ccd6f6;
   font-family: 'Arial', sans-serif;
   overflow: hidden;
+  height: 100vh;
+}
+.circle {
+  width: 50%;
+  /* Tamaño más grande para mayor difuminado */
+  height: 100%;
+  /* Tamaño más grande para mayor difuminado */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 40%, rgba(255, 255, 255, 0.1) 60%, rgba(255, 255, 255, 0.05) 67%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 50%;
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+}
+
+.container {
+  // overflow: hidden;
+  margin-top: 35px;
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+}
+a {
+  text-decoration: none;
 }

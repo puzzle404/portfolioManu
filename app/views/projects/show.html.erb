@@ -1,0 +1,24 @@
+
+<div class="container carousel-container" data-controller ='carrousel'>
+  <h1 class='text-center'><%= @project.name %></h1>
+    <input type="radio" name="slider" id="item-1" checked>
+    <input type="radio" name="slider" id="item-2">
+    <input type="radio" name="slider" id="item-3">
+  <div class="cards h-50">
+    <label class="card" for="item-1" id="song-1">
+      <%= cl_image_tag @project.photos[0].key %>
+    </label>
+    <label class="card" for="item-2" id="song-2">
+      <%= cl_image_tag @project.photos[1].key %>
+    </label>
+    <label class="card" for="item-3" id="song-3">
+      <%= cl_image_tag @project.photos[2].key %>
+    </label>
+  </div>
+  <p><%= @project.description %></p>
+  <div>
+    <% @project.skills.each do |skill| %>
+      <span class="badge my-1"><%= skill.name %></span>
+    <% end %>
+  </div>
+</div>
