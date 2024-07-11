@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_17_233719) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_10_025309) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -41,6 +41,27 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_17_233719) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "experience_skills", force: :cascade do |t|
+    t.bigint "skill_id", null: false
+    t.bigint "experience_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["experience_id"], name: "index_experience_skills_on_experience_id"
+    t.index ["skill_id"], name: "index_experience_skills_on_skill_id"
+  end
+
+  create_table "experiences", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.text "short_description"
+    t.date "start_date"
+    t.date "end_date"
+    t.string "company"
+    t.string "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "project_skills", force: :cascade do |t|
@@ -82,6 +103,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_17_233719) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "experience_skills", "experiences"
+  add_foreign_key "experience_skills", "skills"
   add_foreign_key "project_skills", "projects"
   add_foreign_key "project_skills", "skills"
 end

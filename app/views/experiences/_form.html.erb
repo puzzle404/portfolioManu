@@ -1,0 +1,14 @@
+<%= simple_form_for(experience, data: {controller: 'select2'}) do |f| %>
+  <%= f.input :name, label: 'Name' %>
+  <%= f.input :company, label: 'Company' %>
+  <%= f.input :role, label: 'Role' %>
+  <%= f.input :photos, as: :file, label: 'Photos', input_html: { multiple: true  } %>
+  <%= f.input :skill_ids, label: 'Skills', collection: Skill.all, as: :select, input_html: { multiple: true, id: 'tom-select-it' } %>
+  <%= f.input :description, label: 'Description' %>
+  <%= f.input :short_description, label: 'Short description' %>
+  <div class="d-flex flex-wrap">
+    <%= f.input :start_date, as: :date, label: 'Initial Date', html5: true, wrapper_html: {class: 'flex-fill'} %>
+    <%= f.input :end_date, as: :date, label: 'Final date', html5: true, wrapper_html: {class: 'flex-fill'} %>
+  </div>
+  <%= f.submit "Save" %>
+<% end %>

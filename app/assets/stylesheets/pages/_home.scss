@@ -59,7 +59,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* Fondo más opaco en hover */
   backdrop-filter: blur(15px);
-  /* Aumentar el desenfoque en hover */
+  box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.2), 0 3px 4px rgba(0, 0, 0, 0.2);
 }
 
 .experience-item p {

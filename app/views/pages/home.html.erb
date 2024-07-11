@@ -62,9 +62,10 @@
                 </div>
                 <%# <h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5> %>
                 <p>Build and maintain critical components used to construct Klaviyo’s frontend, across the whole product. Work closely with cross-functional teams, including developers, designers, and product managers, to implement and advocate for best practices in web accessibility.</p>
-                <% project.skills.each do |skill| %>
+                <% project.skills.first(5).each do |skill| %>
                   <span class="badge my-1"><%= skill.name %></span>
                 <% end %>
+                <span><%= project.skills.count > 5 ? '....' : '' %></span>
               </div>
             </div>
           <% end %>
