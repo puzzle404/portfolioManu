@@ -12,11 +12,11 @@ export default class extends Controller {
       });
     });
 
-    const circle = document.querySelector('.circle');
+    this.circle = document.querySelector('.circle');
 
     document.addEventListener('mousemove', (e) => {
-      circle.style.left = `${e.clientX}px`;
-      circle.style.top = `${e.clientY}px`;
+      this.circle.style.left = `${e.clientX}px`;
+      this.circle.style.top = `${e.clientY}px`;
     });
   }
 }
