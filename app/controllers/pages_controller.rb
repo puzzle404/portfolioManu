@@ -3,5 +3,6 @@ class PagesController < ApplicationController
 
   def home
     @projects = Project.all
+    @experiences = Experience.all
   end
 end
