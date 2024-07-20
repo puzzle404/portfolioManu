@@ -3,6 +3,16 @@
   <%= f.input :company, label: 'Company' %>
   <%= f.input :role, label: 'Role' %>
   <%= f.input :photos, as: :file, label: 'Photos', input_html: { multiple: true  } %>
+  <% if params[:action] == 'edit' %>
+    <div class="d-flex gap-3">
+      <% experience.photos.each do |photo| %>
+        <div id="photo-card-<%= photo.id %>" class="photo-card">
+          <%= cl_image_tag photo.key, class: 'img-fluid aspect-ratio-item' %>
+          <%= link_to "×", experience_photo_path(experience.id, photo.id), data: { turbo_method: :delete }, class: 'delete-photo' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
   <%= f.input :skill_ids, label: 'Skills', collection: Skill.all, as: :select, input_html: { multiple: true, id: 'tom-select-it' } %>
   <%= f.input :description, label: 'Description' %>
   <%= f.input :short_description, label: 'Short description' %>

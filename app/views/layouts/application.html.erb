@@ -24,10 +24,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
   </head>
 
-  <body data-controller = ''>
+  <body data-controller = '' style="<%= 'overflow: hidden' if params[:action] == 'home' %>">
     <div class="circle"></div>
     <%= render "shared/navbar" if user_signed_in? %>
-    <%= render "shared/flashes" %>
+    <div id="flash">
+      <%= render "shared/flashes" %>
+    </div>
     <%= yield %>
   </body>
 </html>

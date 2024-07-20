@@ -1,0 +1,4 @@
+<% if @removed == true %>
+  <%= turbo_stream.remove "photo-card-#{@photo.id}" %>
+<% end %>
+<%= turbo_stream.update "flash", partial: 'shared/flashes' %>
