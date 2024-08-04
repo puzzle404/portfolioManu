@@ -53,7 +53,7 @@
         <%# <h4 class='ps-2 text-green'>PROJECTS</h4> %>
         <% @projects.each do |project| %>
           <%= link_to project_path(project), class: 'text-decoration-none color-w' do %>
-            <div class="experience-item d-flex gap-3">
+            <div class="experience-item d-flex gap-3 my-5">
               <%= cl_image_tag project.photos[0].key, class: 'img-project rounded border-2 mt-1'  %>
               <div class="card-text">
                 <div class="d-flex gap-5 align-items-center">
@@ -83,9 +83,10 @@
             <div class="experience-card-text">
               <h5><%= experience.role %>, <%= experience.name %><i class="fas fa-external-link-alt"></i></h5>
               <p><%= experience.short_description %></p>
-              <% experience.skills.each do |skill| %>
-                <span class="badge"><%= skill.name %></span>
+              <% experience.skills.first(5).each do |skill| %>
+                <span class="badge my-1"><%= skill.name %></span>
               <% end %>
+              <span><%= experience.skills.count > 5 ? '....' : '' %></span>
             </div>
           </div>
         <% end %>

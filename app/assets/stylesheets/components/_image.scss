@@ -1,13 +1,7 @@
 .aspect-ratio-container {
-  // position: relative;
   width: 100%;
-  // padding-bottom: 56.25%;
-  /* Relación de aspecto 16:9 (9/16 * 100) */
 }
 .aspect-ratio-item {
-  // position: absolute;
-  // top: 0;
-  // left: 0;
   width: 6rem;
   height: 6rem;
   object-fit: cover;
