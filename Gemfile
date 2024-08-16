@@ -79,3 +79,11 @@ end
 gem "cloudinary"
 # Use jquery as the JavaScript librar
 gem 'jquery-rails'
+gem "ruby-openai"
+gem "actioncable-enhanced-postgresql-adapter"
+gem "solid_queue"
+gem "view_component", "~> 2.57"
+
+gem "matrix", "~> 0.4.2"
+gem "langchainrb", "~> 0.15.0"
+gem "neighbor", "~> 0.4.0"

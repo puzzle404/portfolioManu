@@ -1,0 +1,28 @@
+
+<%= turbo_frame_tag "modal" do %>
+<meta name="turbo-visit-control" content="reload">
+  <%= tag.div data: { controller: "turbo-modal",
+                      turbo_modal_target: "modal",
+                      action: "turbo:submit-end->turbo-modal#submitEnd keyup@window->turbo-modal#closeWithKeyboard " },
+                      class: "modal d-block show" do %>
+
+    <div class="modal-dialog modal-dialog-centered <%= @modal_dialog %>" role="document">
+      <div class="modal-content <%= @clases %>">
+        <div class="modal-header <%= @modal_h %>">
+          <h5 class="modal-title"><%= @title %></h5>
+          <%= button_tag data: { action: "turbo-modal#hideModal" }, type: "button", class: "close", style: "border: none; background: none;" do %>
+            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+          <% end %>
+        </div>
+        <div class="modal-body <%= @modal_b %>">
+          <%= content %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <style>
+    .modal-backdrop {
+      background-color: #00000054;
+    }
+  </style>
+<% end %>
