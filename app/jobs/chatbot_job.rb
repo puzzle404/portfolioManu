@@ -31,10 +31,12 @@ class ChatbotJob < ApplicationJob
     questions = Question.where(session_id: @question.session_id)
     results = []
 
-    system_text = "You are an assistant for my portfolio web, and you need to answer the questions with real information of mine, Manuel Ferrer."
+    system_text = "You are an assistant that provides detailed and accurate information about the portfolio and professional experiences of Manuel Ferrer.
+    Manuel Ferrer is a skilled web developer with experience in Ruby on Rails, API development, and working with technologies such as Hotwire, Stimulus, and Turbo Streams.
+    Your job is to answer questions based solely on his professional experiences, projects, and achievements."
     nearest_products = get_nearest_products # to code as private method
     nearest_products.each do |product|
-      system_text += ""
+      system_text += "Description: #{product.content}, All the information is about experience and projects that Manuel Ferrer has"
     end
     results << { role: "system", content: system_text }
 
@@ -58,6 +60,12 @@ class ChatbotJob < ApplicationJob
       :embedding, question_embedding,
       distance: "euclidean"
     ) # you may want to add .first(3) here to limit the number of results
+    nearest_products.each do |n|
+      puts 'CHUNKSSSSS'
+      puts n.content
+      # n.content
+    end
+    return nearest_products
   end
 
   def client
