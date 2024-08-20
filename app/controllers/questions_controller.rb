@@ -17,7 +17,11 @@ class QuestionsController < ApplicationController
         format.html { redirect_to questions_path }
       end
     else
-     render :index, status: :unprocessable_entity
+      # render :index, status: :unprocessable_entity
+      flash[:notice] = 'NO se puede'
+      respond_to do |format|
+        format.turbo_stream
+      end
     end
   end
 
