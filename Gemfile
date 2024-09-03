@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 ruby "3.1.2"
+# ruby "3.0.3"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.3", ">= 7.1.3.4"
@@ -85,5 +86,6 @@ gem "solid_queue"
 gem "view_component", "~> 2.57"
 
 gem "matrix", "~> 0.4.2"
-gem "langchainrb", "~> 0.15.4"
+# gem "langchainrb", "~> 0.15.4"
+gem 'langchainrb', github: 'puzzle404/langchainrb', branch: 'main'
 gem "neighbor", "~> 0.4.0"

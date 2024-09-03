@@ -6,6 +6,19 @@ GIT
       actionpack (>= 5.2)
       activemodel (>= 5.2)
 
+GIT
+  remote: https://github.com/puzzle404/langchainrb.git
+  revision: aa14bcb09fb9bf45556779e291951d04c2686cfc
+  branch: main
+  specs:
+    langchainrb (0.15.4)
+      baran (~> 0.1.9)
+      json-schema (~> 4)
+      matrix
+      pragmatic_segmenter (~> 0.3.0)
+      rainbow (~> 3.1.0)
+      zeitwerk (~> 2.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -176,13 +189,6 @@ GEM
       thor (>= 0.14, < 2.0)
     json-schema (4.3.1)
       addressable (>= 2.8)
-    langchainrb (0.15.4)
-      baran (~> 0.1.9)
-      json-schema (~> 4)
-      matrix
-      pragmatic_segmenter (~> 0.3.0)
-      rainbow (~> 3.1.0)
-      zeitwerk (~> 2.5)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -364,7 +370,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jquery-rails
-  langchainrb (~> 0.15.4)
+  langchainrb!
   matrix (~> 0.4.2)
   neighbor (~> 0.4.0)
   pg (~> 1.1)
