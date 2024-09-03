@@ -1,7 +1,7 @@
-<%#= render TurboModalComponent.new(title: "Chat") do %>
+<%= render TurboModalComponent.new(title: "Ask me anything!", clases: 'notClose', modal_h: 'd-flex justify-content-between') do %>
   <!-- app/views/questions/index.html.erb -->
   <div class="container chatbot">
-    <h1>Chat with us</h1>
+    <h1>About Manu..</h1>
     <div id="questions">
       <%= render @questions %>
     </div>
@@ -11,4 +11,4 @@
   <style>
 
   </style>
-<%# end %>
+<% end %>

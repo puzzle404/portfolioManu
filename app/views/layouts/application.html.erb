@@ -25,7 +25,7 @@
   </head>
 
   <body data-controller = '' style="<%= 'overflow: hidden' if params[:action] == 'home' %>">
-    <div class="text-center"><%= link_to 'Chat', questions_path, data: {} %></div>
+    <div class="text-center"><%= link_to 'Chat', questions_path, data: {turbo_frame: 'modal'} %></div>
     <div class="circle"></div>
      <%= render "shared/navbar" if user_signed_in? %>
     <div id="flash">
