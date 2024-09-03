@@ -85,5 +85,5 @@ gem "solid_queue"
 gem "view_component", "~> 2.57"
 
 gem "matrix", "~> 0.4.2"
-gem "langchainrb", "~> 0.15.0"
+gem "langchainrb", "~> 0.15.4"
 gem "neighbor", "~> 0.4.0"
