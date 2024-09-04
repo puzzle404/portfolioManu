@@ -7,7 +7,7 @@ class QuestionsController < ApplicationController
 
   def create
     @question = Question.new(question_params)
-    @question.session_id = session[:user_session_id] # Asocia la pregunta con la sesión actual
+    @question.session_id = session.id.to_s # Asocia la pregunta con la sesión actual
     if @question.save
       respond_to do |format|
         format.turbo_stream do
