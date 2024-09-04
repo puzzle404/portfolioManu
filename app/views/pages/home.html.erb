@@ -1,6 +1,6 @@
-<div class="container main-content">
+<div class="container main-content my-0">
 	<div class="row g-2 h-100 flex-wrap">
-		<div class="col-lg-6 col-md-6 col-sm-12 left-column" style='overflow: hidden'>
+		<div class="col-lg-6 col-md-6 col-sm-12 left-column">
 			<div class="d-flex flex-column h-100 min-vh-100">
 				<div class="div">
 					<h1 class="main-heading">Manuel Ferrer</h1>
@@ -12,6 +12,7 @@
 					<a class="nav-link active" href="#about" data-turbo-false>ABOUT</a>
           <a class="nav-link" href="#experience" data-turbo-false>EXPERIENCE</a>
           <a class="nav-link" href="#projects" data-turbo-false>PROJECTS</a>
+          <div class="nav-link py-0"><%= link_to 'CHAT WITH ME', questions_path, data: {turbo_frame: 'modal'}, class:'nav-link' %></div>
 				</nav>
 				<div class="d-flex align-items-end h-100">
 					<div class="social-icons mt-auto">

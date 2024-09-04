@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+  body {
+    overflow: scroll !important;
+    /* Cambia el color de fondo a rojo en pantallas pequeñas */
+    .right-column {
+      overflow-y: hidden;
+      height: auto;
+    }
+  }
+}

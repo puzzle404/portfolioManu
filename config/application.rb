@@ -31,6 +31,6 @@ module PortfolioManu
     # config.eager_load_paths << Rails.root.join("extras")
     # Para manjejar jobs
     config.active_job.queue_adapter = :solid_queue
-    Rails.application.config.session_store :cookie_store, key: '_porfolio_manu_session', expire_after: 30.days
+
   end
 end

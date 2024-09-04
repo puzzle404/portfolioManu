@@ -7,7 +7,18 @@ class Project < ApplicationRecord
   validates :short_description, length: { maximum: 50 }
 
   def chunkable_s
-    description
+    project_content = [
+      "Project Name: #{name}",
+      "Start Date: #{start_date.to_s}",
+      "End Date: #{end_date.to_s}",
+      "Description: #{description}"
+    ].compact.join("\n")
+
+    # Concatenar información de skills asociados con una etiqueta identificativa
+    skills_content = "Skills: #{skills.pluck(:name).join(', ')}"
+
+    # Retornar contenido combinado
+    [project_content, skills_content].join("\n\n")
   end
 
   def chunkable_separators

@@ -76,4 +76,5 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   config.active_storage.service = :cloudinary
+  Rails.application.config.session_store :cookie_store, key: '_porfolio_manu_session', expire_after: 30.days
 end

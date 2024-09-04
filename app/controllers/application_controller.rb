@@ -7,6 +7,10 @@ class ApplicationController < ActionController::Base
       # Question.destroy_all
       session[:user_session_id] = session.id.to_s
     end
+    puts 'SESSIONNNNNNNNNNNNNNNN'
+    puts session[:user_session_id]
+    puts 'SESSIONNNNNNNNNNNNNNNN'
+
     return session[:user_session_id]
   end
 end

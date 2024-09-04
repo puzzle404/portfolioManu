@@ -11,7 +11,7 @@
         <div class="modal-header <%= @modal_h %>">
           <h5 class="modal-title"><%= @title %></h5>
           <%= button_tag data: { action: "turbo-modal#hideModal" }, type: "button", class: "close", style: "border: none; background: none;" do %>
-            <span aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+            <span aria-hidden="true"><i class="fa-solid fa-xmark text-light"></i></span>
           <% end %>
         </div>
         <div class="modal-body <%= @modal_b %>">
