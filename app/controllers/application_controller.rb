@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
     end
     puts 'SESSIONNNNNNNNNNNNNNNN'
     puts session[:user_session_id]
+    puts session
     puts 'SESSIONNNNNNNNNNNNNNNN'
 
     return session[:user_session_id]
