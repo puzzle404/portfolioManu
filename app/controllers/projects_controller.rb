@@ -28,6 +28,11 @@ class ProjectsController < ApplicationController
     @project = Project.find(params[:id])
 
     skill_ids = params[:project][:skill_ids].compact.reject { |element| element.strip.empty? }
+    if params[:project][:photos].blank? || params[:project][:photos] == [""]
+      params = project_params.except(:photos)
+    else
+      params = project_params
+    end
     if @project.update(project_params)
       redirect_to project_path(params[:id]), notice: "todo OK"
     else
