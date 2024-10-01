@@ -1,4 +1,5 @@
 class ExperiencesController < ApplicationController
+  before_action :authenticate_user!, only: [:edit, :new]
   before_action :find_experience, only: [:edit, :update]
   def new
     @experience = Experience.new

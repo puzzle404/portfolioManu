@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+  before_action :authenticate_user!, only: [:edit, :new]
   before_action :project_find, only: [:edit, :show]
   def new
     @project = Project.new

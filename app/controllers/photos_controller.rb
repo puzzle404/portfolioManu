@@ -1,4 +1,5 @@
 class PhotosController < ApplicationController
+  before_action :authenticate_user!
   def destroy
     @experience = Experience.find(params[:experience_id])
     @photo = @experience.photos.find(params[:id])
