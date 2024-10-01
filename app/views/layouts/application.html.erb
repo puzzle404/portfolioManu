@@ -26,7 +26,8 @@
 
   <body data-controller = ''>
     <div class="circle"></div>
-     <%= render "shared/navbar" if current_user %>
+    <%= current_user %>
+     <%= render "shared/navbar" %>
     <div id="flash">
       <%= render "shared/flashes" %>
     </div>
