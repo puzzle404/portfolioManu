@@ -4,11 +4,13 @@
   <%= f.input :photos, as: :file, label: 'Photos', input_html: { multiple: true  } %>
   <% if params[:action] == 'edit' %>
     <div class="d-flex gap-3">
-      <% project.photos.each do |photo| %>
-        <div id="photo-card-<%= photo.id %>" class="photo-card">
-          <%= cl_image_tag photo.key, class: 'img-fluid aspect-ratio-item' %>
-          <%= link_to "×", experience_photo_path(project.id, photo.id), data: { turbo_method: :delete }, class: 'delete-photo' %>
-        </div>
+      <% unless project.photos.empty? %>
+        <% project.photos.each do |photo| %>
+          <div id="photo-card-<%= photo.id %>" class="photo-card">
+            <%= cl_image_tag photo.key, class: 'img-fluid aspect-ratio-item' %>
+            <%= link_to "×", experience_photo_path(project.id, photo.id), data: { turbo_method: :delete }, class: 'delete-photo' %>
+          </div>
+        <% end %>
       <% end %>
     </div>
   <% end %>

@@ -29,11 +29,11 @@ class ProjectsController < ApplicationController
 
     skill_ids = params[:project][:skill_ids].compact.reject { |element| element.strip.empty? }
     if params[:project][:photos].blank? || params[:project][:photos] == [""]
-      params = project_params.except(:photos)
+      params_project = project_params.except(:photos)
     else
-      params = project_params
+      params_project = project_params
     end
-    if @project.update(project_params)
+    if @project.update(params_project)
       redirect_to project_path(params[:id]), notice: "todo OK"
     else
       render :edit, status: :unprocessable_entity
