@@ -4,7 +4,7 @@
   <%= f.input :photos, as: :file, label: 'Photos', input_html: { multiple: true  } %>
   <% if params[:action] == 'edit' %>
     <div class="d-flex gap-3">
-      <% unless project.photos.empty? %>
+      <% unless project.photos.attached? %>
         <% project.photos.each do |photo| %>
           <div id="photo-card-<%= photo.id %>" class="photo-card">
             <%= cl_image_tag photo.key, class: 'img-fluid aspect-ratio-item' %>
