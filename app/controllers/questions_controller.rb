@@ -17,10 +17,13 @@ class QuestionsController < ApplicationController
         format.html { redirect_to questions_path }
       end
     else
-      # render :index, status: :unprocessable_entity
-      flash[:notice] = 'NO se puede'
+      @questions = user_questions
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("new_question_form", partial: "questions/form",
+            locals: { question: @question })
+        end
+        format.html { render :index, status: :unprocessable_entity }
       end
     end
   end
@@ -29,8 +32,6 @@ class QuestionsController < ApplicationController
   def user_questions
     Question.where(session_id: session.id.to_s)
   end
-
-
 
   def question_params
     params.require(:question).permit(:user_question)

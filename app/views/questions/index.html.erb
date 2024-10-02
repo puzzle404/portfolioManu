@@ -5,6 +5,8 @@
     <div id="questions">
       <%= render @questions %>
     </div>
-    <%= render "form", question: @question %>
+    <%= turbo_frame_tag 'new_question_form' do %>
+      <%= render "form", question: @question %>
+    <% end %>
   </div>
 <% end %>

@@ -1,5 +1,5 @@
 
-<%= turbo_frame_tag "modal" do %>
+<%= turbo_frame_tag "modal", data: {turbo_action: 'advance'} do %>
 <meta name="turbo-visit-control" content="reload">
   <%= tag.div data: { controller: "turbo-modal",
                       turbo_modal_target: "modal",
@@ -10,8 +10,10 @@
       <div class="modal-content <%= @clases %>">
         <div class="modal-header <%= @modal_h %>">
           <h5 class="modal-title"><%= @title %></h5>
-          <%= button_tag data: { action: "turbo-modal#hideModal" }, type: "button", class: "close", style: "border: none; background: none;" do %>
-            <span aria-hidden="true"><i class="fa-solid fa-xmark text-light"></i></span>
+          <%= link_to root_path do %>
+            <%= button_tag type: "button", class: "close", style: "border: none; background: none;" do %>
+              <span aria-hidden="true"><i class="fa-solid fa-xmark text-light"></i></span>
+            <% end %>
           <% end %>
         </div>
         <div class="modal-body <%= @modal_b %>">

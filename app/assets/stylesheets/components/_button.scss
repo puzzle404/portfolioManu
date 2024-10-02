@@ -1,9 +1,19 @@
 .badge {
   background-color: #233554;
-  color: #64ffda;
+  color: $green;
   border-radius: 14px;
   padding-inline: 15px;
   padding-top: 10px;
   padding-bottom: 10px;
   font-weight: normal !important;
+}
+
+.enter_green {
+  background-color: rgba($button_green_bg, 0.3) !important;
+  color:white !important;
+  border: 0.3px solid #31f9c7
+}
+
+.border_button_green_thin {
+
 }
