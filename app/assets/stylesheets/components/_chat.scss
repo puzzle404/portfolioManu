@@ -66,7 +66,7 @@
     float: left;
     padding: 6px 10px 7px;
     border-radius: 10px 10px 0px 10px;
-    background: rgba(40, 145, 14, .3);
+    background: rgba(17, 86, 93, 0.38);
     margin: 8px 0;
     line-height: 1.4;
     margin-left: 35px;
@@ -90,7 +90,8 @@
   // max-height: 650px;
   z-index: 2;
   overflow: hidden;
-  box-shadow: 0 5px 30px rgba(0, 0, 0, .2);
+  box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.2), 0 3px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -1px 23px rgba(119, 179, 154, 0.17);
   background: rgba(19, 34, 53, 0.6);
   border-radius: 12px;
   display: flex;
