@@ -77,4 +77,6 @@ Rails.application.configure do
 
   config.active_storage.service = :cloudinary
   Rails.application.config.session_store :cookie_store, key: '_porfolio_manu_session', expire_after: 30.days
+  config.action_mailer.delivery_method = :letter_opener_web
+  config.action_mailer.perform_deliveries = true
 end
