@@ -69,6 +69,8 @@ group :development do
   # gem "spring"
 
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
+  gem "letter_opener"
+  gem 'letter_opener_web', '~> 3.0'
 end
 
 group :test do
