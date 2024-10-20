@@ -4,24 +4,21 @@ export default class extends Controller {
   static targets = ["modal"];
 
   connect() {
-    // console.log("probando turbo-modal controller");
+    // Escuchar clics en el documento
+    document.querySelector('.modal-backdrop').classList.remove('d-none')
+  }
+
+  disconnect() {
+    // Eliminar el listener cuando el controlador se desconecta
   }
 
   hideModal() {
-    this.element.parentElement.removeAttribute("src"); // it might be nice to also remove the modal SRC
+    this.element.parentElement.removeAttribute("src"); // Eliminar la referencia al modal
+    document.querySelector('.modal-backdrop').classList.add('d-none')
+
     this.element.remove();
   }
 
-  submitEnd(e) {
-    if (e.detail.success) {
-      const notClose = document.querySelector(".notClose");
-      if (notClose) {
-        e.preventDefault();
-      } else {
-        this.hideModal();
-      }
-    }
-  }
   closeWithKeyboard(e) {
     if (e.code == "Escape") {
       this.hideModal();
@@ -29,10 +26,15 @@ export default class extends Controller {
   }
 
   closeBackground(e) {
-    // Verificar si el clic se originó fuera del sidebar
-    if (e.target.classList.contains("modal-backdrop")) {
+    // Detectar el verdadero contenido del modal, no el div envolvente
+    const modalContent = document.querySelector('.modal-content');
+
+    // Si el clic fue fuera del verdadero contenido del modal, cerramos el modal
+    const clickedOutside = !modalContent.contains(e.target);
+    console.log('Clic fuera del modal:', clickedOutside);
+
+    if (clickedOutside) {
       this.hideModal();
-    } else {
     }
   }
 }

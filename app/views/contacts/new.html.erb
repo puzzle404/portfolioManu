@@ -1,18 +1,18 @@
-<div class="container h-100 mt-5">
-  <h1>Contact Me</h1>
+<%= render TurboModalComponent.new(title: "Contact me!", clases: 'chatbot-content notClose', modal_h: ' d-flex justify-content-between') do %>
+  <div class="container h-100 mt-5">
+    <%= simple_form_for @contact, url: contacts_path, method: :post do |f| %>
+      <div class="form-group">
+        <%= f.input :name, label: "Name", required: true, input_html: {class:'text_area_container'} %>
+        <%= f.input :email, label: "Email", required: true, input_html: {class:'text_area_container'} %>
+        <%= f.input :message, label: "Message", as: :text, required: true, input_html: {class:'text_area_container'} %>
+      </div>
+      <%= f.submit "Send Message", class: "btn btn-primary enter_green w-100" %>
+    <% end %>
 
-  <%= simple_form_for @contact, url: contacts_path, method: :post do |f| %>
-    <div class="form-group">
-      <%= f.input :name, label: "Name", required: true %>
-      <%= f.input :email, label: "Email", required: true %>
-      <%= f.input :message, label: "Message", as: :text, required: true %>
-    </div>
-    <%= f.submit "Send Message", class: "btn btn-primary" %>
-  <% end %>
-
-  <% if flash[:notice] %>
-    <p class="alert alert-success"><%= flash[:notice] %></p>
-  <% elsif flash[:alert] %>
-    <p class="alert alert-danger"><%= flash[:alert] %></p>
-  <% end %>
-</div>
+    <% if flash[:notice] %>
+      <p class="alert alert-success"><%= flash[:notice] %></p>
+    <% elsif flash[:alert] %>
+      <p class="alert alert-danger"><%= flash[:alert] %></p>
+    <% end %>
+  </div>
+<% end %>

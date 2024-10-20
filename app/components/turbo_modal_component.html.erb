@@ -1,11 +1,14 @@
+<%= turbo_frame_tag "modal", data: { turbo_action: 'advance' } do %>
+  <meta name="turbo-visit-control" content="reload">
 
-<%= turbo_frame_tag "modal", data: {turbo_action: 'advance'} do %>
-<meta name="turbo-visit-control" content="reload">
+  <!-- Fondo del modal -->
+  <div class="modal-backdrop d-none"></div>
+
+  <!-- Contenido del modal -->
   <%= tag.div data: { controller: "turbo-modal",
                       turbo_modal_target: "modal",
-                      action: "turbo:submit-end->turbo-modal#submitEnd keyup@window->turbo-modal#closeWithKeyboard " },
+                      action: "turbo:submit-end->turbo-modal#submitEnd keyup@window->turbo-modal#closeWithKeyboard click@document->turbo-modal#closeBackground " },
                       class: "modal d-block show" do %>
-
     <div class="modal-dialog modal-dialog-centered <%= @modal_dialog %>" role="document">
       <div class="modal-content modal_container_shadow <%= @clases %>">
         <div class="modal-header <%= @modal_h %>">
@@ -22,9 +25,16 @@
       </div>
     </div>
   <% end %>
+
   <style>
     .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background-color: #00000054;
+      z-index: 1040;
     }
   </style>
 <% end %>

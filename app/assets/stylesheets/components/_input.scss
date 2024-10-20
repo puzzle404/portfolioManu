@@ -7,8 +7,11 @@
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-.text_area_container {
+/* Agrupando los selectores para evitar repetición */
+.text_area_container,
+.text_area_container:hover,
+.text_area_container:focus {
   border: 0.3px solid #31f9c7 !important;
-  opacity: 0.3;
-  background-color: #1e293b;
+  background-color: rgba(30, 41, 59, 0.3);
+  color: white !important;
 }
