@@ -11,8 +11,7 @@ class ContactsController < ApplicationController
       flash[:notice] = "Your message has been sent successfully!"
       redirect_to root_path
     else
-      flash[:alert] = "Please fill in all required fields correctly."
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 

@@ -12,6 +12,17 @@ export default class extends Controller {
     // Eliminar el listener cuando el controlador se desconecta
   }
 
+  submitEnd(e) {
+    if (e.detail.success) {
+      const notClose = document.querySelector(".notClose");
+      if (notClose) {
+        e.preventDefault();
+      } else {
+        this.hideModal();
+      }
+    }
+  }
+
   hideModal() {
     this.element.parentElement.removeAttribute("src"); // Eliminar la referencia al modal
     document.querySelector('.modal-backdrop').classList.add('d-none')
@@ -37,4 +48,5 @@ export default class extends Controller {
       this.hideModal();
     }
   }
+
 }
