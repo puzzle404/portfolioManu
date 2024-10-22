@@ -1,8 +1,17 @@
 <div class="navbar navbar-expand-sm navbar-light navbar-lewagon">
   <div class="container-fluid">
-    <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag "m.png" %>
-    <% end %>
+    <div class="d-flex gap-4 align-items-center">
+      <%= link_to root_path, class: "navbar-brand" do %>
+        <%= image_tag "m.png" %>
+      <% end %>
+      <div type="button" id="playButton" title='Play some music' onclick="document.dispatchEvent(new CustomEvent('togglePlayPause'))" data-turbo-permanent>
+        <svg id="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="music-icon music-animated" d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z" fill="currentColor" style="display:none;"></path>
+          <path class="play-icon" d="M8 5v14l11-7-11-7z" fill="currentColor" ></path>
+          <%# <path class="pause-icon" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor" style="display:none;"></path> %>
+        </svg>
+      </div>
+    </div>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>

@@ -32,19 +32,13 @@
 						<%= link_to "https://www.facebook.com/cmanuferrer" do %>
               <i class="fa-brands fa-facebook"></i>
             <% end %>
-						<%#= link_to "" do %>
-              <%# <i class="fab fa-goodreads"></i> %>
-            <%# end %>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="col-lg-6 col-md-6 col-sm-12 right-column">
-      <%# <h4 class='ps-2 text-green'>ABOUT</h4> %>
 			<div class="description mx-2" id='about'>
-
-
 				<p>Passionate about technology, I motivate myself daily to expand my knowledge. My goal is to take my skills as a Full Stack Web Developer a step further, continuously learn, and above all, generate value with enthusiasm and commitment.</p>
 				<p>I am Full-Stack Web Developer with strong technical skills as a Ruby on Rails developer, as well as SQL and MySQL for databases. I am well-versed in front-end technologies such as HTML, CSS, and JavaScript, and have experience with modern frameworks like Stimulus and Hotwire. Additionally, I have experience deploying applications in the cloud using platforms like Heroku, and in creating and consuming REST APIs for service integration. My testing skills include using tools like RSpec, Capybara, and Selenium to ensure code quality.</p>
         <p>
@@ -77,7 +71,6 @@
 
 
 			<div class="experience-section" id='experience'>
-        <%# <h4 class='ps-2 text-green'>EXPERIENCE</h4> %>
         <% @experiences.each do |experience| %>
           <div class="experience-item d-flex gap-3">
             <div class="timeline flex-fill">
@@ -95,26 +88,15 @@
         <% end %>
 			</div>
 		</div>
-
-
 	</div>
   <%= turbo_frame_tag 'modal', data: {turbo_action:'advance'} %>
 </div>
+
 <script>
-  // document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-//       anchor.addEventListener('click', function(e) {
-//           e.preventDefault();
-
-//           document.querySelector(this.getAttribute('href')).scrollIntoView({
-//               behavior: 'smooth'
-//           });
-//       });
-// });
-
  var circle = document.querySelector('.circle');
 
-        document.addEventListener('mousemove', (e) => {
-            circle.style.left = `${e.clientX}px`;
-            circle.style.top = `${e.clientY}px`;
-        });
+  document.addEventListener('mousemove', (e) => {
+      circle.style.left = `${e.clientX}px`;
+      circle.style.top = `${e.clientY}px`;
+  });
 </script>

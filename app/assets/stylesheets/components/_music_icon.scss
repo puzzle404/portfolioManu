@@ -1,0 +1,25 @@
+.music-animated {
+  display: none;
+  /* Oculto por defecto */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.music-icon {
+  /* La animación de pulso se aplica cuando el ícono es visible */
+  animation: pulse 1.5s infinite;
+  transform-origin: center;
+  /* Asegura que el pulso ocurra desde el centro del icono */
+}

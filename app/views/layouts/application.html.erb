@@ -25,6 +25,7 @@
   </head>
 
   <body data-controller = ''>
+    <%= render 'shared/youtube' %>
     <div class="circle"></div>
      <%= render "shared/navbar" if user_signed_in? %>
     <div id="flash">
@@ -33,4 +34,6 @@
 
     <%= yield %>
   </body>
+
+
 </html>
