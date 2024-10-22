@@ -1,6 +1,8 @@
 .music-animated {
-  display: none;
-  /* Oculto por defecto */
+  will-change: transform;
+  animation: pulse 1.5s infinite;
+  transform-origin: center;
+  font-size: 20px;
 }
 
 @keyframes pulse {
@@ -15,11 +17,4 @@
   100% {
     transform: scale(1);
   }
-}
-
-.music-icon {
-  /* La animación de pulso se aplica cuando el ícono es visible */
-  animation: pulse 1.5s infinite;
-  transform-origin: center;
-  /* Asegura que el pulso ocurra desde el centro del icono */
 }
