@@ -1,102 +1,22 @@
 <div class="container main-content my-0">
 	<div class="row g-2 h-100 flex-wrap">
 		<div class="col-lg-6 col-md-6 col-sm-12 left-column">
-			<div class="d-flex flex-column h-100 min-vh-100">
-				<div class="div">
-					<h1 class="main-heading">Manuel Ferrer</h1>
-					<h2 class="sub-heading">Full-Stack Developer specializing in Ruby on Rails</h2>
-					<p>I create robust, scalable, and user-centric web applications. Passionate about solving complex challenges with clean, efficient code.</p>
-				</div>
-
-				<nav class="nav flex-column mt-5">
-					<a class="nav-link active" href="#about" data-turbo-false>ABOUT</a>
-          <a class="nav-link" href="#experience" data-turbo-false>EXPERIENCE</a>
-          <a class="nav-link" href="#projects" data-turbo-false>PROJECTS</a>
-          <div class="nav-link py-0"><%= link_to 'KNOW ABOUT ME', questions_path, data: {turbo_frame: 'modal'}, class:'nav-link' %></div>
-          <div class="nav-link py-0"><%= link_to 'CONTACT ME', new_contact_path,data: {turbo_frame: 'modal'}, class:'nav-link' %></div>
-				</nav>
-				<div class="d-flex align-items-end h-100">
-					<div class="social-icons mt-auto">
-            <%= link_to "https://github.com/puzzle404", target: "_blank" do %>
-						  <i class="fab fa-github"></i>
-            <% end %>
-						<%= link_to "https://www.linkedin.com/in/ferrer-manuel/", target: "_blank" do %>
-              <i class="fab fa-linkedin"></i>
-            <% end %>
-						<%= link_to "https://x.com/cmanuferrer" do %>
-              <i class="fa-brands fa-twitter"></i>
-            <% end %>
-						<%= link_to "https://www.instagram.com/cmanuferrer/", target: "_blank" do %>
-              <i class="fab fa-instagram"></i>
-            <% end %>
-						<%= link_to "https://www.facebook.com/cmanuferrer" do %>
-              <i class="fa-brands fa-facebook"></i>
-            <% end %>
-					</div>
-				</div>
-			</div>
+			<%= render 'leftside_landing' %>
 		</div>
 
 		<div class="col-lg-6 col-md-6 col-sm-12 right-column">
-			<div class="description mx-2" id='about'>
-				<p>Passionate about technology, I motivate myself daily to expand my knowledge. My goal is to take my skills as a Full Stack Web Developer a step further, continuously learn, and above all, generate value with enthusiasm and commitment.</p>
-				<p>I am Full-Stack Web Developer with strong technical skills as a Ruby on Rails developer, as well as SQL and MySQL for databases. I am well-versed in front-end technologies such as HTML, CSS, and JavaScript, and have experience with modern frameworks like Stimulus and Hotwire. Additionally, I have experience deploying applications in the cloud using platforms like Heroku, and in creating and consuming REST APIs for service integration. My testing skills include using tools like RSpec, Capybara, and Selenium to ensure code quality.</p>
-        <p>
-          My entrepreneurial background includes founding an audiovisual production services company, serving both corporate and independent clients, and the role of partner-coordinator in real estate projects. These experiences have strengthened my teamwork skills.
-        </p>
-			</div>
+      <div class="description mx-2" id='about'>
+        <%= render 'pages/about_description' %>
+      </div>
 
-			<div class="experience-section" id='projects'>
-        <%# <h4 class='ps-2 text-green'>PROJECTS</h4> %>
-        <% @projects.each do |project| %>
-          <%= link_to project_path(project), class: 'text-decoration-none color-w' do %>
-            <div class="experience-item d-flex gap-3 my-5">
-              <%= cl_image_tag project.photos[0].key, class: 'img-project rounded border-2 mt-1'  %>
-              <div class="card-text">
-                <div class="d-flex gap-5 align-items-center">
-                  <h5><%= project.name %></h5>
-                  <i class="fas fa-external-link-alt icon-card-open mb-2"></i>
-                </div>
-                <%# <h5>Senior Frontend Engineer, Accessibility · Klaviyo <i class="fas fa-external-link-alt"></i></h5> %>
-                <p><%= project.short_description %>.</p>
-                <% project.skills.first(5).each do |skill| %>
-                  <span class="badge my-1"><%= skill.name %></span>
-                <% end %>
-                <span><%= project.skills.count > 5 ? '....' : '' %></span>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-			</div>
+      <div class="experience-section" id='projects'>
+        <%= render partial: 'project', collection: @projects %>
+      </div>
 
-
-			<div class="experience-section" id='experience'>
-        <% @experiences.each do |experience| %>
-          <div class="experience-item d-flex gap-3">
-            <div class="timeline flex-fill">
-              <a class="nav-link" href="#"><%= experience.start_date %> - <%= experience.end_date %></a>
-            </div>
-            <div class="experience-card-text">
-              <h5><%= experience.role %>, <%= experience.name %><i class="fas fa-external-link-alt"></i></h5>
-              <p><%= experience.short_description %></p>
-              <% experience.skills.first(5).each do |skill| %>
-                <span class="badge my-1"><%= skill.name %></span>
-              <% end %>
-              <span><%= experience.skills.count > 5 ? '....' : '' %></span>
-            </div>
-          </div>
-        <% end %>
-			</div>
+       <div class="experience-section" id='experience'>
+        <%= render partial: 'experience', collection: @experiences %>
+      </div>
 		</div>
 	</div>
   <%= turbo_frame_tag 'modal', data: {turbo_action:'advance'} %>
 </div>
-
-<script>
- var circle = document.querySelector('.circle');
-
-  document.addEventListener('mousemove', (e) => {
-      circle.style.left = `${e.clientX}px`;
-      circle.style.top = `${e.clientY}px`;
-  });
-</script>
