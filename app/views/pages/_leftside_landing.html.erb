@@ -1,8 +1,8 @@
 <div class="d-flex flex-column h-100 min-vh-100">
   <div class="div">
     <h1 class="main-heading">Manuel Ferrer</h1>
-    <h2 class="sub-heading">Full-Stack Developer specializing in Ruby on Rails</h2>
-    <p>I create robust, scalable, and user-centric web applications. Passionate about solving complex challenges with clean, efficient code.</p>
+    <h2 class="sub-heading mb-4">Full-Stack Developer specializing in Ruby on Rails</h2>
+    <p>I create robust, scalable, and user-centric web applications. Passionate about <br> solving complex challenges with clean, efficient code.</p>
   </div>
 
   <nav class="nav flex-column mt-5">
@@ -11,8 +11,8 @@
       <%= link_to 'EXPERIENCE', '#experience', class: 'nav-link link-scrollable' %>
       <%= link_to 'PROJECTS', '#projects' , class: 'nav-link link-scrollable' %>
     </div>
-    <div class="nav-link py-0"><%= link_to 'KNOW ABOUT ME', questions_path, data: {turbo_frame: 'modal'}, class:'nav-link' %></div>
-    <div class="nav-link py-0"><%= link_to 'CONTACT ME', new_contact_path,data: {turbo_frame: 'modal'}, class:'nav-link' %></div>
+    <%= link_to 'KNOW ABOUT ME', questions_path, data: {turbo_frame: 'modal'}, class:'nav-link' %>
+    <%= link_to 'CONTACT ME', new_contact_path,data: {turbo_frame: 'modal'}, class:'nav-link' %>
   </nav>
   <div class="d-flex align-items-end h-100">
     <div class="social-icons mt-auto">

@@ -5,7 +5,7 @@
 		</div>
 
     <div class="col-lg-6 col-md-6 col-sm-12 right-column" data-controller="scrolleables-sections" data-scrollable-sections-link-selector-value=".link-scrollable" data-scrollable-sections-scrollable-selector-value=".right-column">
-      <div class="description mx-2" id='about'>
+      <div class="description mx-2 text-section" id='about'>
         <%= render 'pages/about_description' %>
       </div>
 
@@ -20,3 +20,14 @@
 	</div>
   <%= turbo_frame_tag 'modal' %>
 </div>
+<style>
+  .text-section p {
+      font-size: 1,2rem; /* Ajusta según tu diseño */
+      line-height: 1.4; /* Aumenta el espacio entre líneas */
+     /* color: #d4d4d4;  Un color gris suave en lugar de blanco puro */
+    }
+
+    .text-section strong {
+      font-weight: bold; /* Resalta palabras clave */
+}
+</style>
