@@ -20,6 +20,7 @@
   <div class="d-flex flex-wrap">
     <%= f.input :start_date, as: :date, label: 'Initial Date', html5: true, wrapper_html: {class: 'flex-fill'} %>
     <%= f.input :end_date, as: :date, label: 'Final date', html5: true, wrapper_html: {class: 'flex-fill'} %>
+    <%= f.input :end_date, as: :select, collection: Skill.pluck(:name, :id), label: '', input_html: { class: '' }, label_html: { class: '' } %>
   </div>
   <%= f.submit "Save" %>
   <!-- [...] -->

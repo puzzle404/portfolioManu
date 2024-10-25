@@ -4,7 +4,7 @@
 			<%= render 'leftside_landing' %>
 		</div>
 
-		<div class="col-lg-6 col-md-6 col-sm-12 right-column">
+    <div class="col-lg-6 col-md-6 col-sm-12 right-column" data-controller="scrolleables-sections" data-scrollable-sections-link-selector-value=".link-scrollable" data-scrollable-sections-scrollable-selector-value=".right-column">
       <div class="description mx-2" id='about'>
         <%= render 'pages/about_description' %>
       </div>
@@ -18,5 +18,5 @@
       </div>
 		</div>
 	</div>
-  <%= turbo_frame_tag 'modal', data: {turbo_action:'advance'} %>
+  <%= turbo_frame_tag 'modal' %>
 </div>
