@@ -5,6 +5,10 @@ class ExperiencesController < ApplicationController
     @experience = Experience.new
   end
 
+  def show
+
+  end
+
   def create
     @experience = Experience.new(experience_params)
     if @experience.save
