@@ -13,6 +13,12 @@
 
 
 
+html,
+body {
+  overflow: visible;
+  height: auto;
+}
+
 body {
   background-color: rgba(15, 23, 42, 1);
   color: #ccd6f6;
@@ -20,8 +26,9 @@ body {
   // font-family: "Lato", sans-serif;
   font-family: "Nunito", "Helvetica", "sans-serif";
 
-  height: 100vh;
+  min-height: 100vh;
 }
+
 .circle {
   width: 50%;
   /* Tamaño más grande para mayor difuminado */
@@ -43,6 +50,7 @@ body {
 h1 {
   margin-bottom: 1.5rem;
 }
+
 a {
   text-decoration: none;
 }

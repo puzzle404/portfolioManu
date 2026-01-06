@@ -1,10 +1,28 @@
 @media (max-width: 768px) {
   body {
-    overflow: scroll !important;
-    /* Cambia el color de fondo a rojo en pantallas pequeñas */
-    .right-column {
-      overflow-y: hidden;
-      height: auto;
-    }
+    overflow-x: hidden;
+  }
+
+  .left-column {
+    position: relative;
+    height: auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .right-column {
+    padding-top: 2rem;
+  }
+
+  .main-heading {
+    font-size: 36px;
+  }
+
+  .sub-heading {
+    font-size: 18px;
+  }
+
+  .container.main-content {
+    padding-inline: 1.5rem;
   }
 }

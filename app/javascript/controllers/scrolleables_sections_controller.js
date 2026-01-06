@@ -1,31 +1,27 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="scrollable-sections"
+// Connects to data-controller="scrolleables-sections"
+// Ahora usa scroll del documento en lugar de scroll interno
 export default class extends Controller {
   static values = {
-    linkSelector: String,
-    scrollableSelector: String
+    linkSelector: String
   }
 
   connect() {
-    // Obtener los selectores personalizados de los enlaces y de la columna scrollable
     const linkSelector = this.linkSelectorValue || '.link-scrollable';
-    const scrollableSelector = this.scrollableSelectorValue || '.right-column';
 
     document.querySelectorAll(linkSelector).forEach(link => {
       link.addEventListener('click', function (event) {
-        event.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
+        event.preventDefault();
 
-        const targetId = this.getAttribute('href').substring(1); // Obtener el ID de la sección sin el #
-        const targetElement = document.getElementById(targetId); // Encontrar el elemento objetivo en la columna scrollable
-        const scrollableColumn = document.querySelector(scrollableSelector); // Columna scrollable
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
 
-        if (targetElement && scrollableColumn) {
-          // Obtener la posición del elemento en relación con la columna scrollable
-          const targetPosition = targetElement.offsetTop;
+        if (targetElement) {
+          // Scroll suave del documento completo
+          const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
 
-          // Desplazar suavemente la columna scrollable hacia la posición del objetivo
-          scrollableColumn.scrollTo({
+          window.scrollTo({
             top: targetPosition - 80,
             behavior: 'smooth'
           });

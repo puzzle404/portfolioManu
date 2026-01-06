@@ -1,12 +1,11 @@
-
-
 .container.main-content {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding-inline: 3rem;
 }
+
 .main-heading {
   font-size: 56px;
   font-weight: bold;
@@ -33,11 +32,9 @@
   color: #8892b0;
 }
 
-
 .experience-item {
   padding: 10px;
 }
-
 
 .experience-item h4 {
   color: white;
@@ -50,15 +47,10 @@
 
 .experience-item:hover {
   color: $green;
-  // box-shadow: 0 8px 16px rgba(48, 42, 40, -0.9), 0 12px 24px rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  background: rgba(90, 90, 90, 0.1);
   border-radius: 8px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* Fondo más opaco en hover */
+  background: rgba(90, 90, 90, 0.1);
   backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.2), 0 3px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -67,7 +59,7 @@
 }
 
 .social-icons {
-  padding-bottom: 13rem;
+  padding-bottom: 3rem;
 }
 
 .social-icons i {
@@ -84,32 +76,126 @@
   color: $green;
 }
 
+// Nueva estructura de columnas
 .left-column {
-  position: -webkit-sticky;
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
   padding-top: 5rem;
   padding-bottom: 4rem;
+  align-self: flex-start;
 }
+
 .right-column {
-  height: 100%;
-  overflow-y: auto;
-  padding-right: 15px;
   padding-top: 4rem;
   padding-bottom: 4rem;
-  // margin-top: 3rem;
+  padding-right: 15px;
 }
 
 .right-column::-webkit-scrollbar {
-  width: 0px;
-  /* Elimina la barra de desplazamiento en Webkit (Safari y Chrome) */
-  background: transparent;
-  /* Hace que la barra de desplazamiento sea transparente */
+  display: none;
 }
 
 .experience-section {
   margin-bottom: 50px;
   margin-top: 50px
+}
+
+// Footer estilos - Ancho completo
+.site-footer {
+  background: rgba(10, 15, 25, 0.95);
+  border-top: 1px solid rgba(136, 146, 176, 0.15);
+  padding: 3rem 0 1.5rem;
+  margin-top: 0;
+  width: 100%;
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 0 1.5rem;
+    }
+  }
+
+  .footer-heading {
+    font-size: 0.75rem;
+    color: $green;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+  }
+
+  .footer-billing-info {
+    p {
+      font-size: 0.85rem;
+      color: #8892b0;
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+
+      .label {
+        color: #ccd6f6;
+        font-weight: 500;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  .footer-social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8892b0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(136, 146, 176, 0.1);
+    transition: all 0.3s ease;
+
+    i {
+      font-size: 1.1rem;
+    }
+
+    &:hover {
+      color: $green;
+      background: rgba(100, 255, 218, 0.08);
+      border-color: rgba(100, 255, 218, 0.3);
+      transform: translateY(-2px);
+    }
+  }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding: 1.5rem 3rem 0;
+    border-top: 1px solid rgba(136, 146, 176, 0.1);
+    text-align: center;
+
+    p {
+      font-size: 0.8rem;
+      color: #8892b0;
+      margin: 0;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      padding: 1.5rem 1.5rem 0;
+    }
+  }
 }
