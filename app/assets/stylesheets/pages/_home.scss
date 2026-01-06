@@ -3,94 +3,166 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding-inline: 3rem;
+  padding-inline: 6rem;
 }
 
 .main-heading {
-  font-size: 56px;
-  font-weight: bold;
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #ccd6f6 0%, #64ffda 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
 }
 
 .sub-heading {
-  font-size: 24px;
+  font-size: 1.25rem;
+  color: $green;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+}
+
+.left-column-content p {
+  font-size: 0.95rem;
   color: #8892b0;
+  line-height: 1.7;
+  max-width: 320px;
 }
 
 .nav-link {
+  padding: 0.5rem 0;
   padding-left: 0;
   color: #8892b0;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: #8892b0;
+    transition: all 0.3s ease;
+  }
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
   color: $green;
+
+  &::before {
+    width: 48px;
+    background: $green;
+  }
 }
 
 .description {
-  font-size: 18px;
+  font-size: 1rem;
   color: #8892b0;
+  line-height: 1.8;
 }
 
 .experience-item {
-  padding: 10px;
+  padding: 1.25rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 
-.experience-item h4 {
-  color: white;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.experience-item h5 {
+  color: #ccd6f6;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.experience-item .icon-card-open {
+  opacity: 0;
+  transition: all 0.3s ease;
+  transform: translateX(-5px);
 }
 
 .color-w {
-  color: white;
+  color: #ccd6f6;
 }
 
 .experience-item:hover {
-  color: $green;
-  border-radius: 8px;
-  background: rgba(90, 90, 90, 0.1);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  box-shadow: 0 -1px 1px rgba(255, 255, 255, 0.2), 0 3px 4px rgba(0, 0, 0, 0.2);
+  background: rgba(100, 255, 218, 0.03);
+  border-color: rgba(100, 255, 218, 0.1);
+
+  h5 {
+    color: $green;
+  }
+
+  .icon-card-open {
+    opacity: 1;
+    transform: translateX(0);
+    color: $green;
+  }
 }
 
 .experience-item p {
   color: #8892b0;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
-.social-icons {
-  padding-bottom: 3rem;
-}
-
-.social-icons i {
-  color: #8892b0;
-  margin-right: 15px;
-  font-size: 24px;
-}
-
-.social-icons i:hover {
+.badge {
+  background: rgba(100, 255, 218, 0.1);
   color: $green;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
 
 .text-green {
   color: $green;
 }
 
-// Nueva estructura de columnas
+// Estructura de columnas
 .left-column {
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
-  padding-top: 5rem;
-  padding-bottom: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+  padding-right: 2rem;
   align-self: flex-start;
 }
 
+.left-column-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  nav {
+    margin-top: 3rem;
+  }
+}
+
 .right-column {
-  padding-top: 4rem;
+  padding-top: 6rem;
   padding-bottom: 4rem;
-  padding-right: 15px;
+  padding-left: 2rem;
+  border-left: 1px solid rgba(136, 146, 176, 0.1);
 }
 
 .right-column::-webkit-scrollbar {
@@ -98,8 +170,36 @@
 }
 
 .experience-section {
-  margin-bottom: 50px;
-  margin-top: 50px
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+
+// Placeholder de imagen de proyecto
+.img-project-placeholder {
+  width: 100px;
+  height: 70px;
+  background: rgba(100, 255, 218, 0.05) !important;
+  border: 1px solid rgba(100, 255, 218, 0.15) !important;
+  flex-shrink: 0;
+}
+
+// Timeline de experiencias
+.timeline {
+  min-width: 100px;
+  max-width: 120px;
+
+  .nav-link {
+    font-size: 0.7rem;
+    color: #8892b0;
+    padding: 0;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 400;
+
+    &::before {
+      display: none;
+    }
+  }
 }
 
 // Footer estilos - Ancho completo
@@ -113,7 +213,7 @@
   .footer-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 3rem;
+    padding: 0 6rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
@@ -183,7 +283,7 @@
   .footer-bottom {
     max-width: 1200px;
     margin: 2rem auto 0;
-    padding: 1.5rem 3rem 0;
+    padding: 1.5rem 6rem 0;
     border-top: 1px solid rgba(136, 146, 176, 0.1);
     text-align: center;
 
