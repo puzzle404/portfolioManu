@@ -1,36 +1,69 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="scrollable-sections"
+// Connects to data-controller="scrolleables-sections"
 export default class extends Controller {
   static values = {
-    linkSelector: String,
-    scrollableSelector: String
+    linkSelector: String
   }
 
   connect() {
-    // Obtener los selectores personalizados de los enlaces y de la columna scrollable
     const linkSelector = this.linkSelectorValue || '.link-scrollable';
-    const scrollableSelector = this.scrollableSelectorValue || '.right-column';
+    this.links = document.querySelectorAll(linkSelector);
 
-    document.querySelectorAll(linkSelector).forEach(link => {
-      link.addEventListener('click', function (event) {
-        event.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
+    // Handle click events
+    this.links.forEach(link => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
 
-        const targetId = this.getAttribute('href').substring(1); // Obtener el ID de la sección sin el #
-        const targetElement = document.getElementById(targetId); // Encontrar el elemento objetivo en la columna scrollable
-        const scrollableColumn = document.querySelector(scrollableSelector); // Columna scrollable
+        // Update active state
+        this.setActiveLink(link);
 
-        if (targetElement && scrollableColumn) {
-          // Obtener la posición del elemento en relación con la columna scrollable
-          const targetPosition = targetElement.offsetTop;
+        const targetId = link.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
 
-          // Desplazar suavemente la columna scrollable hacia la posición del objetivo
-          scrollableColumn.scrollTo({
+        if (targetElement) {
+          const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({
             top: targetPosition - 80,
             behavior: 'smooth'
           });
         }
       });
     });
+
+    // Handle scroll to update active link based on section in view
+    window.addEventListener('scroll', () => this.updateActiveOnScroll());
+
+    // Initial check
+    this.updateActiveOnScroll();
+  }
+
+  setActiveLink(activeLink) {
+    this.links.forEach(link => link.classList.remove('active'));
+    activeLink.classList.add('active');
+  }
+
+  updateActiveOnScroll() {
+    const scrollPosition = window.scrollY + 150;
+
+    let currentSection = null;
+
+    this.links.forEach(link => {
+      const targetId = link.getAttribute('href').substring(1);
+      const section = document.getElementById(targetId);
+
+      if (section) {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          currentSection = link;
+        }
+      }
+    });
+
+    if (currentSection) {
+      this.setActiveLink(currentSection);
+    }
   }
 }

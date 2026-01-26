@@ -1,36 +1,25 @@
-<div class="d-flex flex-column h-100 min-vh-100">
-  <div class="div">
+<div class="left-column-content">
+  <div>
     <h1 class="main-heading">Manuel Ferrer</h1>
-    <h2 class="sub-heading mb-4">Full-Stack Developer specializing in Ruby on Rails</h2>
-    <p>I create robust, scalable, and user-centric web applications. Passionate about <br> solving complex challenges with clean, efficient code.</p>
+    <h2 class="sub-heading">Full-Stack Developer</h2>
+    <p>I build robust, scalable web applications with Ruby on Rails. Passionate about clean code and exceptional user experiences.</p>
   </div>
 
-  <nav class="nav flex-column mt-5">
-    <div class="scrolleables">
-      <%= link_to 'ABOUT','#about' , class: 'nav-link active link-scrollable' %>
-      <%= link_to 'EXPERIENCE', '#experience', class: 'nav-link link-scrollable' %>
-      <%= link_to 'PROJECTS', '#projects' , class: 'nav-link link-scrollable' %>
-    </div>
-    <%= link_to 'KNOW ABOUT ME', questions_path, data: {turbo_frame: 'modal'}, class:'nav-link' %>
-    <%= link_to 'CONTACT ME', new_contact_path,data: {turbo_frame: 'modal'}, class:'nav-link' %>
+  <nav class="nav flex-column">
+    <%= link_to '#about', class: 'nav-link link-scrollable' do %>
+      About
+    <% end %>
+    <%= link_to '#experience', class: 'nav-link link-scrollable' do %>
+      Experience
+    <% end %>
+    <%= link_to '#projects', class: 'nav-link link-scrollable' do %>
+      Projects
+    <% end %>
+    <%= link_to questions_path, data: {turbo_frame: 'modal'}, class: 'nav-link' do %>
+      Know About Me
+    <% end %>
+    <%= link_to new_contact_path, data: {turbo_frame: 'modal'}, class: 'nav-link' do %>
+      Contact Me
+    <% end %>
   </nav>
-  <div class="d-flex align-items-end h-100">
-    <div class="social-icons mt-auto">
-      <%= link_to "https://github.com/puzzle404", target: "_blank" do %>
-        <i class="fab fa-github"></i>
-      <% end %>
-      <%= link_to "https://www.linkedin.com/in/ferrer-manuel/", target: "_blank" do %>
-        <i class="fab fa-linkedin"></i>
-      <% end %>
-      <%= link_to "https://x.com/cmanuferrer" do %>
-        <i class="fa-brands fa-twitter"></i>
-      <% end %>
-      <%= link_to "https://www.instagram.com/cmanuferrer/", target: "_blank" do %>
-        <i class="fab fa-instagram"></i>
-      <% end %>
-      <%= link_to "https://www.facebook.com/cmanuferrer" do %>
-        <i class="fa-brands fa-facebook"></i>
-      <% end %>
-    </div>
-  </div>
 </div>

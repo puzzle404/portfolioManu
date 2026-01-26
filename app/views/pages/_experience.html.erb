@@ -1,7 +1,7 @@
 <%= link_to experience_path(experience), class: 'text-decoration-none color-w' do %>
   <div class="experience-item d-flex gap-3">
     <div class="timeline flex-fill">
-      <div class="nav-link" href="#"><%= experience.start_date %> - <%= experience.end_date %></div>
+      <div class="nav-link" href="#"><%= experience.start_date&.strftime('%b %Y') %> — <%= experience.end_date&.strftime('%b %Y') || 'Present' %></div>
     </div>
     <div class="experience-card-text">
       <h5><%= experience.role %>, <%= experience.name %><i class="fas fa-external-link-alt"></i></h5>

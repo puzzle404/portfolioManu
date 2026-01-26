@@ -1,25 +1,27 @@
 <div class="container main-content my-0">
 	<div class="row g-2 h-100 flex-wrap">
-		<div class="col-lg-6 col-md-6 col-sm-12 left-column">
+		<div class="col-lg-5 col-md-5 col-sm-12 left-column">
 			<%= render 'leftside_landing' %>
 		</div>
 
-    <div class="col-lg-6 col-md-6 col-sm-12 right-column" data-controller="scrolleables-sections" data-scrollable-sections-link-selector-value=".link-scrollable" data-scrollable-sections-scrollable-selector-value=".right-column">
+    <div class="col-lg-7 col-md-7 col-sm-12 right-column" data-controller="scrolleables-sections" data-scrolleables-sections-link-selector-value=".link-scrollable">
       <div class="description mx-2 text-section" id='about'>
         <%= render 'pages/about_description' %>
       </div>
 
-      <div class="experience-section" id='projects'>
-        <%= render partial: 'project', collection: @projects %>
+      <div class="experience-section" id='experience'>
+        <%= render partial: 'experience', collection: @experiences %>
       </div>
 
-       <div class="experience-section" id='experience'>
-        <%= render partial: 'experience', collection: @experiences %>
+       <div class="experience-section" id='projects'>
+        <%= render partial: 'project', collection: @projects %>
       </div>
 		</div>
 	</div>
   <%= turbo_frame_tag 'modal' %>
 </div>
+
+<%= render 'shared/footer' %>
 <style>
   .text-section p {
       font-size: 1,2rem; /* Ajusta según tu diseño */
