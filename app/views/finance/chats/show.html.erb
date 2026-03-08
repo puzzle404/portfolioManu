@@ -1,0 +1,48 @@
+<%= turbo_stream_from "chat_#{@chat.id}" %>
+
+<div class="finance-chat" data-controller="finance-chat">
+  <div class="finance-messages" id="finance_messages" data-finance-chat-target="messages">
+    <% if @messages.empty? %>
+      <div id="finance_welcome" class="finance-welcome text-center py-5">
+        <i class="fas fa-wallet fa-3x mb-3" style="color: rgba(255,255,255,0.2);"></i>
+        <p class="text-muted">Enviame un gasto para empezar.<br>Ej: "pague 500 de luz"</p>
+      </div>
+    <% end %>
+
+    <% @messages.each do |message| %>
+      <%= render "finance/messages/message", message: message %>
+    <% end %>
+  </div>
+
+  <div class="finance-input-bar">
+    <%= form_with(
+      url: finance_chat_messages_path,
+      method: :post,
+      data: {
+        controller: "finance-message-form",
+        action: "submit->finance-message-form#submit"
+      }
+    ) do |f| %>
+      <div class="input-group">
+        <label class="btn btn-outline-secondary finance-attach-btn" for="finance_attachments">
+          <i class="fas fa-paperclip"></i>
+        </label>
+        <input type="file" name="message[attachments][]" multiple id="finance_attachments"
+               class="d-none" accept="image/*"
+               data-finance-message-form-target="fileInput"
+               data-action="change->finance-message-form#fileSelected">
+
+        <input type="text" name="message[content]" class="form-control finance-text-input"
+               placeholder="Ej: pague 500 de luz..."
+               autocomplete="off"
+               data-finance-message-form-target="input">
+
+        <button type="submit" class="btn btn-success finance-send-btn"
+                data-finance-message-form-target="submitBtn">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="finance-attachment-preview d-none" data-finance-message-form-target="preview"></div>
+    <% end %>
+  </div>
+</div>

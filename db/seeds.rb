@@ -78,7 +78,11 @@ Experience.create!(
   end_date: Date.new(2020, 5, 31)
 )
 
+puts "Creating finance categories..."
+Finance::Category.seed!
+
 puts "✅ Seeds completed!"
 puts "   - #{Project.count} projects created"
 puts "   - #{Experience.count} experiences created"
 puts "   - #{Skill.count} skills created"
+puts "   - #{Finance::Category.count} finance categories created"

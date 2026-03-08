@@ -1,0 +1,20 @@
+<%= turbo_stream.remove "finance_welcome" if @chat.messages.count <= 1 %>
+
+<%= turbo_stream.append "finance_messages" do %>
+  <div class="finance-message finance-message--user">
+    <div class="finance-bubble finance-bubble--user">
+      <div><%= @content %></div>
+      <span class="finance-time"><%= Time.current.strftime("%H:%M") %></span>
+    </div>
+  </div>
+<% end %>
+
+<%= turbo_stream.append "finance_messages" do %>
+  <div id="finance_message_loading" class="finance-message finance-message--assistant">
+    <div class="finance-bubble finance-bubble--assistant">
+      <div class="finance-typing">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+<% end %>
