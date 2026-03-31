@@ -1,0 +1,24 @@
+<% return if message.role == "system" || message.role == "tool" %>
+
+<div id="finance_message_<%= message.id %>" class="finance-message finance-message--<%= message.role %>">
+  <% if message.role == "user" %>
+    <div class="finance-bubble finance-bubble--user">
+      <div><%= message.content %></div>
+      <% if message.attachments.attached? %>
+        <div class="finance-attachments mt-1">
+          <% message.attachments.each do |attachment| %>
+            <% if attachment.image? %>
+              <%= image_tag url_for(attachment), class: "finance-receipt-thumb" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <span class="finance-time"><%= message.created_at&.strftime("%H:%M") %></span>
+    </div>
+  <% elsif message.role == "assistant" %>
+    <div class="finance-bubble finance-bubble--assistant">
+      <div id="finance_message_<%= message.id %>_content"><%= message.content || "..." %></div>
+      <span class="finance-time"><%= message.created_at&.strftime("%H:%M") %></span>
+    </div>
+  <% end %>
+</div>
