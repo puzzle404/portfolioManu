@@ -1,0 +1,128 @@
+<% content_for(:finance_title) do %>
+  <i class="fas fa-receipt me-1"></i> Mis Gastos
+<% end %>
+<% content_for(:finance_nav_actions) do %>
+  <%= link_to finance_root_path, class: "finance-nav-btn", title: "Volver al chat" do %>
+    <i class="fas fa-comment-dots"></i>
+  <% end %>
+<% end %>
+
+<div class="finance-expenses-page">
+  <turbo-frame id="finance_expenses_frame" target="_top">
+    <div class="finance-expenses-controls">
+      <%# Row 1: Period + Currency %>
+      <div class="finance-filter-row">
+        <div class="finance-filter-pills">
+          <% %w[today week month year].each do |p| %>
+            <% label = { "today" => "Hoy", "week" => "Sem", "month" => "Mes", "year" => "Anio" }[p] %>
+            <%= link_to label, finance_expenses_path(period: p, currency: @currency_filter, category: @category_filter, search: @search),
+                class: "btn-pill #{'active' if @period == p}",
+                data: { turbo_frame: "finance_expenses_frame" } %>
+          <% end %>
+        </div>
+        <span class="finance-filter-divider"></span>
+        <div class="finance-filter-pills">
+          <%= link_to "$", finance_expenses_path(period: @period, category: @category_filter, search: @search),
+              class: "btn-pill #{'active' if @currency_filter.blank?}",
+              title: "Todas las monedas",
+              data: { turbo_frame: "finance_expenses_frame" } %>
+          <%= link_to "ARS", finance_expenses_path(period: @period, currency: "ARS", category: @category_filter, search: @search),
+              class: "btn-pill #{'active' if @currency_filter == 'ARS'}",
+              data: { turbo_frame: "finance_expenses_frame" } %>
+          <%= link_to "USD", finance_expenses_path(period: @period, currency: "USD", category: @category_filter, search: @search),
+              class: "btn-pill #{'active' if @currency_filter == 'USD'}",
+              data: { turbo_frame: "finance_expenses_frame" } %>
+        </div>
+      </div>
+
+      <%# Row 2: Search + Category %>
+      <div class="finance-filter-row">
+        <%= form_with url: finance_expenses_path, method: :get, class: "finance-filter-search", data: { turbo_frame: "finance_expenses_frame" } do %>
+          <input type="hidden" name="period" value="<%= @period %>">
+          <input type="hidden" name="currency" value="<%= @currency_filter %>">
+          <input type="hidden" name="category" value="<%= @category_filter %>">
+          <div class="finance-search-group">
+            <input type="text" name="search" value="<%= @search %>" class="form-control form-control-sm finance-filter-input"
+                   placeholder="Buscar...">
+            <button type="submit" class="finance-search-btn">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        <% end %>
+
+        <div class="finance-filter-select">
+          <select class="form-select form-select-sm finance-filter-input"
+                  onchange="Turbo.visit(this.value, { frame: 'finance_expenses_frame' })">
+            <option value="<%= finance_expenses_path(period: @period, currency: @currency_filter, search: @search) %>"
+                    <%= 'selected' if @category_filter.blank? %>>
+              Categoria
+            </option>
+            <% @categories.each do |cat| %>
+              <option value="<%= finance_expenses_path(period: @period, currency: @currency_filter, category: cat.id, search: @search) %>"
+                      <%= 'selected' if @category_filter == cat.id.to_s %>>
+                <%= cat.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <%# Row 3: Custom date range (collapsed, only visible when needed) %>
+      <div class="finance-filter-dates">
+        <%= form_with url: finance_expenses_path, method: :get, data: { turbo_frame: "finance_expenses_frame" } do %>
+          <input type="hidden" name="period" value="custom">
+          <input type="hidden" name="currency" value="<%= @currency_filter %>">
+          <input type="hidden" name="category" value="<%= @category_filter %>">
+          <input type="hidden" name="search" value="<%= @search %>">
+          <div class="d-flex gap-2 align-items-center">
+            <input type="date" name="start_date" value="<%= @start_date %>" class="form-control form-control-sm finance-filter-input finance-date-input">
+            <span class="finance-filter-separator">a</span>
+            <input type="date" name="end_date" value="<%= @end_date %>" class="form-control form-control-sm finance-filter-input finance-date-input">
+            <button type="submit" class="btn btn-sm finance-filter-apply">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="finance-expenses-total">
+      <div class="total-label">Total &middot; <%= @start_date.strftime("%d/%m/%Y") %> a <%= @end_date.strftime("%d/%m/%Y") %></div>
+      <div class="total-amount">$<%= number_with_delimiter(@total_ars || 0, delimiter: ".") %> <small style="font-size: 14px; font-weight: 500; opacity: 0.5;">ARS</small></div>
+    </div>
+
+    <div class="finance-expenses-scroll">
+      <% if @expenses.empty? %>
+        <div class="text-center py-5 expense-empty">
+          <i class="fas fa-inbox d-block mb-2"></i>
+          No hay gastos en este periodo
+        </div>
+      <% end %>
+
+      <div class="finance-expense-list">
+        <% @expenses.each do |expense| %>
+          <div class="finance-expense-row">
+            <div class="expense-row-icon">
+              <i class="fas <%= expense.category.icon %>"></i>
+            </div>
+            <div class="expense-row-info">
+              <div class="expense-row-desc"><%= expense.description %></div>
+              <div class="expense-row-meta"><%= expense.category.name %></div>
+            </div>
+            <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
+            <div class="expense-row-amount">
+              <% if expense.currency == "USD" %>
+                <span class="expense-amount expense-amount-usd">US$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
+                <% if expense.amount_ars.present? %>
+                  <span class="expense-amount-ars-sub">~$<%= number_with_delimiter(expense.amount_ars&.round, delimiter: ".") %></span>
+                <% end %>
+              <% else %>
+                <span class="expense-amount">$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </turbo-frame>
+</div>

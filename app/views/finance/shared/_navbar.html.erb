@@ -4,9 +4,12 @@
       <%= link_to root_path, class: "text-decoration-none" do %>
         <%= image_tag "m.png", height: 28, style: "height: 28px; width: auto;" %>
       <% end %>
-      <span class="text-light fw-bold">ManuFinance</span>
+      <span class="text-light fw-bold"><%= content_for?(:finance_title) ? content_for(:finance_title) : "ManuFinance" %></span>
     </div>
-    <div>
+    <div class="d-flex align-items-center gap-3">
+      <% if content_for?(:finance_nav_actions) %>
+        <%= content_for(:finance_nav_actions) %>
+      <% end %>
       <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "text-light" do %>
         <i class="fas fa-sign-out-alt"></i>
       <% end %>

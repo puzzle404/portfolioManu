@@ -81,7 +81,7 @@ Experience.create!(
 puts "Creating finance categories..."
 Finance::Category.seed!
 
-puts "✅ Seeds completed!"
+puts "Seeds completed!"
 puts "   - #{Project.count} projects created"
 puts "   - #{Experience.count} experiences created"
 puts "   - #{Skill.count} skills created"

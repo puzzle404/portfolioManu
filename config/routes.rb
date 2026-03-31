@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     resource :chat, only: [:show] do
       resources :messages, only: [:create]
     end
+    resources :expenses, only: [:index]
   end
   get "/finance", to: "finance/chats#show", as: :finance_root
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

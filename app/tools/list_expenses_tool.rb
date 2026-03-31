@@ -21,15 +21,18 @@ class ListExpensesTool < RubyLLM::Tool
     end
 
     expenses = expenses.includes(:category).recent
-    total = expenses.sum(:amount)
+    total_ars = expenses.sum(:amount_ars)
 
     items = expenses.limit(20).map do |e|
-      { date: e.expense_date.to_s, amount: e.amount.to_f, description: e.description, category: e.category.name }
+      item = { date: e.expense_date.to_s, amount: e.amount.to_f, currency: e.currency,
+               description: e.description, category: e.category.name }
+      item[:amount_ars] = e.amount_ars.to_f if e.currency == "USD"
+      item
     end
 
     {
       period: "#{dates[:start]} a #{dates[:end]}",
-      total: total.to_f,
+      total_ars: total_ars.to_f,
       count: expenses.count,
       expenses: items
     }

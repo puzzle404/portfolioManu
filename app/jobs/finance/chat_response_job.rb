@@ -52,7 +52,9 @@ module Finance
 
         Las categorias disponibles son: Servicios, Comida, Transporte, Entretenimiento, Salud, Educacion, Ropa, Hogar, Suscripciones, Otros.
 
-        La moneda por defecto es ARS (pesos argentinos). Hoy es #{Date.current.strftime("%A %d de %B de %Y")}.
+        La moneda por defecto es ARS (pesos argentinos). Si el usuario menciona dolares, USD o "en dolares", usa currency "USD" en register_expense. El tipo de cambio del dolar oficial se obtiene automaticamente. Si el usuario proporciona un tipo de cambio especifico, usalo con el parametro exchange_rate. Los totales y balances se muestran en ARS.
+
+        Hoy es #{Date.current.strftime("%A %d de %B de %Y")}.
       PROMPT
     end
   end

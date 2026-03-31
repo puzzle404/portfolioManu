@@ -11,9 +11,22 @@ module Finance
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :expense_date, presence: true
     validates :description, presence: true
+    validates :exchange_rate, numericality: { greater_than: 0 }, allow_nil: true
+
+    before_validation :compute_amount_ars
 
     scope :for_period, ->(start_date, end_date) { where(expense_date: start_date..end_date) }
     scope :for_category, ->(category_id) { where(finance_category_id: category_id) }
     scope :recent, -> { order(expense_date: :desc, created_at: :desc) }
+
+    private
+
+    def compute_amount_ars
+      if currency == "USD" && exchange_rate.present?
+        self.amount_ars = amount * exchange_rate
+      elsif currency.blank? || currency == "ARS"
+        self.amount_ars = amount
+      end
+    end
   end
 end

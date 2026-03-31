@@ -1,6 +1,7 @@
 class GetBalanceTool < RubyLLM::Tool
   description "Gets a summary of spending by category for a given period. " \
-              "Use this when the user asks for a balance, summary, totals, or category breakdown."
+              "Use this when the user asks for a balance, summary, totals, or category breakdown. " \
+              "All totals are in ARS (USD expenses are converted at the exchange rate used when registered)."
 
   param :period, desc: "Time period: 'week', 'month', 'year'", required: false
 
@@ -12,14 +13,14 @@ class GetBalanceTool < RubyLLM::Tool
     dates = resolve_dates(period)
     expenses = @user.finance_expenses.for_period(dates[:start], dates[:end]).includes(:category)
 
-    by_category = expenses.group(:finance_category_id).sum(:amount).map do |cat_id, total|
+    by_category = expenses.group(:finance_category_id).sum(:amount_ars).map do |cat_id, total|
       cat = Finance::Category.find(cat_id)
       { category: cat.name, total: total.to_f, icon: cat.icon }
     end
 
     {
       period: "#{dates[:start]} a #{dates[:end]}",
-      total_spent: expenses.sum(:amount).to_f,
+      total_spent_ars: expenses.sum(:amount_ars).to_f,
       transaction_count: expenses.count,
       by_category: by_category.sort_by { |c| -c[:total] }
     }
