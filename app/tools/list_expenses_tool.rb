@@ -6,12 +6,13 @@ class ListExpensesTool < RubyLLM::Tool
   param :start_date, desc: "Start date in YYYY-MM-DD format (required if period is 'custom')", required: false
   param :end_date, desc: "End date in YYYY-MM-DD format (required if period is 'custom')", required: false
   param :category, desc: "Category name to filter by (optional)", required: false
+  param :expense_type, desc: "Filter by type: 'fijo' (fixed) or 'variable'. Optional, shows all if omitted.", required: false
 
   def initialize(user)
     @user = user
   end
 
-  def execute(period: "month", start_date: nil, end_date: nil, category: nil)
+  def execute(period: "month", start_date: nil, end_date: nil, category: nil, expense_type: nil)
     dates = resolve_dates(period, start_date, end_date)
     expenses = @user.finance_expenses.for_period(dates[:start], dates[:end])
 
@@ -19,6 +20,7 @@ class ListExpensesTool < RubyLLM::Tool
       cat = Finance::Category.find_by(name: category)
       expenses = expenses.for_category(cat.id) if cat
     end
+    expenses = expenses.for_expense_type(expense_type) if expense_type.present?
 
     expenses = expenses.includes(:category).recent
     total_ars = expenses.sum(:amount_ars)

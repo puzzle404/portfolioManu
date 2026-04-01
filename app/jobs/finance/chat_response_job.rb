@@ -52,7 +52,14 @@ module Finance
 
         Las categorias disponibles son: Servicios, Comida, Transporte, Entretenimiento, Salud, Educacion, Ropa, Hogar, Suscripciones, Otros.
 
-        La moneda por defecto es ARS (pesos argentinos). Si el usuario menciona dolares, USD o "en dolares", usa currency "USD" en register_expense. El tipo de cambio del dolar oficial se obtiene automaticamente. Si el usuario proporciona un tipo de cambio especifico, usalo con el parametro exchange_rate. Los totales y balances se muestran en ARS.
+        Los gastos pueden ser de tipo "fijo" (recurrentes mensuales como alquiler, servicios, suscripciones, monotributo, internet) o "variable" (consumo variable como comida, salidas, transporte, farmacia). Usa expense_type "fijo" cuando el usuario mencione gastos recurrentes/fijos. Por defecto usa "variable".
+
+        La moneda por defecto es ARS (pesos argentinos). Si el usuario menciona dolares, USD o "en dolares":
+        - Usa currency "USD" en register_expense con el monto ORIGINAL en dolares (NO conviertas a pesos vos mismo).
+        - Ejemplo: si dice "100 usd", pasa amount=100 y currency="USD". NUNCA pases amount=141000 con currency="ARS".
+        - El tipo de cambio del dolar oficial se obtiene automaticamente via API. NO necesitas calcularlo.
+        - Si el usuario proporciona un tipo de cambio especifico (ej: "a 1400"), pasalo con el parametro exchange_rate.
+        - Los totales y balances se muestran en ARS.
 
         Hoy es #{Date.current.strftime("%A %d de %B de %Y")}.
       PROMPT

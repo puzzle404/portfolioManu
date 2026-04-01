@@ -11,12 +11,13 @@ class RegisterExpenseTool < RubyLLM::Tool
   param :currency, desc: "Currency code: 'ARS' (default) or 'USD'. Use USD when user mentions dolares/USD.", required: false
   param :exchange_rate, desc: "Exchange rate USD->ARS. Only needed for USD expenses when user provides a specific rate. " \
                               "If not provided for USD, the official rate is fetched automatically.", required: false
+  param :expense_type, desc: "Type of expense: 'fijo' (fixed/recurring like rent, subscriptions) or 'variable' (one-time like food, outings). Default: 'variable'.", required: false
 
   def initialize(user)
     @user = user
   end
 
-  def execute(amount:, category:, description:, date: nil, currency: "ARS", exchange_rate: nil)
+  def execute(amount:, category:, description:, date: nil, currency: "ARS", exchange_rate: nil, expense_type: "variable")
     expense_date = date.present? ? Date.parse(date) : Date.current
     cat = Finance::Category.find_by(name: category) || Finance::Category.find_by(name: "Otros")
     currency = currency&.upcase || "ARS"
@@ -34,7 +35,8 @@ class RegisterExpenseTool < RubyLLM::Tool
       description: description,
       expense_date: expense_date,
       currency: currency,
-      exchange_rate: rate
+      exchange_rate: rate,
+      expense_type: expense_type
     )
 
     message = "Gasto registrado: $#{expense.amount} #{currency} - #{expense.description} (#{cat.name})"

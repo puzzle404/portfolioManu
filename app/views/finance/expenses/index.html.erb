@@ -15,32 +15,48 @@
         <div class="finance-filter-pills">
           <% %w[today week month year].each do |p| %>
             <% label = { "today" => "Hoy", "week" => "Sem", "month" => "Mes", "year" => "Anio" }[p] %>
-            <%= link_to label, finance_expenses_path(period: p, currency: @currency_filter, category: @category_filter, search: @search),
+            <%= link_to label, finance_expenses_path(period: p, currency: @currency_filter, category: @category_filter, search: @search, expense_type: @expense_type_filter),
                 class: "btn-pill #{'active' if @period == p}",
                 data: { turbo_frame: "finance_expenses_frame" } %>
           <% end %>
         </div>
         <span class="finance-filter-divider"></span>
         <div class="finance-filter-pills">
-          <%= link_to "$", finance_expenses_path(period: @period, category: @category_filter, search: @search),
+          <%= link_to "$", finance_expenses_path(period: @period, category: @category_filter, search: @search, expense_type: @expense_type_filter),
               class: "btn-pill #{'active' if @currency_filter.blank?}",
               title: "Todas las monedas",
               data: { turbo_frame: "finance_expenses_frame" } %>
-          <%= link_to "ARS", finance_expenses_path(period: @period, currency: "ARS", category: @category_filter, search: @search),
+          <%= link_to "ARS", finance_expenses_path(period: @period, currency: "ARS", category: @category_filter, search: @search, expense_type: @expense_type_filter),
               class: "btn-pill #{'active' if @currency_filter == 'ARS'}",
               data: { turbo_frame: "finance_expenses_frame" } %>
-          <%= link_to "USD", finance_expenses_path(period: @period, currency: "USD", category: @category_filter, search: @search),
+          <%= link_to "USD", finance_expenses_path(period: @period, currency: "USD", category: @category_filter, search: @search, expense_type: @expense_type_filter),
               class: "btn-pill #{'active' if @currency_filter == 'USD'}",
               data: { turbo_frame: "finance_expenses_frame" } %>
         </div>
       </div>
 
-      <%# Row 2: Search + Category %>
+      <%# Row 2: Expense Type %>
+      <div class="finance-filter-row">
+        <div class="finance-filter-pills">
+          <%= link_to "Todos", finance_expenses_path(period: @period, currency: @currency_filter, category: @category_filter, search: @search),
+              class: "btn-pill #{'active' if @expense_type_filter.blank?}",
+              data: { turbo_frame: "finance_expenses_frame" } %>
+          <%= link_to "Fijos", finance_expenses_path(period: @period, currency: @currency_filter, category: @category_filter, search: @search, expense_type: "fijo"),
+              class: "btn-pill #{'active' if @expense_type_filter == 'fijo'}",
+              data: { turbo_frame: "finance_expenses_frame" } %>
+          <%= link_to "Variables", finance_expenses_path(period: @period, currency: @currency_filter, category: @category_filter, search: @search, expense_type: "variable"),
+              class: "btn-pill #{'active' if @expense_type_filter == 'variable'}",
+              data: { turbo_frame: "finance_expenses_frame" } %>
+        </div>
+      </div>
+
+      <%# Row 3: Search + Category %>
       <div class="finance-filter-row">
         <%= form_with url: finance_expenses_path, method: :get, class: "finance-filter-search", data: { turbo_frame: "finance_expenses_frame" } do %>
           <input type="hidden" name="period" value="<%= @period %>">
           <input type="hidden" name="currency" value="<%= @currency_filter %>">
           <input type="hidden" name="category" value="<%= @category_filter %>">
+          <input type="hidden" name="expense_type" value="<%= @expense_type_filter %>">
           <div class="finance-search-group">
             <input type="text" name="search" value="<%= @search %>" class="form-control form-control-sm finance-filter-input"
                    placeholder="Buscar...">
@@ -53,12 +69,12 @@
         <div class="finance-filter-select">
           <select class="form-select form-select-sm finance-filter-input"
                   onchange="Turbo.visit(this.value, { frame: 'finance_expenses_frame' })">
-            <option value="<%= finance_expenses_path(period: @period, currency: @currency_filter, search: @search) %>"
+            <option value="<%= finance_expenses_path(period: @period, currency: @currency_filter, search: @search, expense_type: @expense_type_filter) %>"
                     <%= 'selected' if @category_filter.blank? %>>
               Categoria
             </option>
             <% @categories.each do |cat| %>
-              <option value="<%= finance_expenses_path(period: @period, currency: @currency_filter, category: cat.id, search: @search) %>"
+              <option value="<%= finance_expenses_path(period: @period, currency: @currency_filter, category: cat.id, search: @search, expense_type: @expense_type_filter) %>"
                       <%= 'selected' if @category_filter == cat.id.to_s %>>
                 <%= cat.name %>
               </option>
@@ -67,13 +83,14 @@
         </div>
       </div>
 
-      <%# Row 3: Custom date range (collapsed, only visible when needed) %>
+      <%# Row 4: Custom date range %>
       <div class="finance-filter-dates">
         <%= form_with url: finance_expenses_path, method: :get, data: { turbo_frame: "finance_expenses_frame" } do %>
           <input type="hidden" name="period" value="custom">
           <input type="hidden" name="currency" value="<%= @currency_filter %>">
           <input type="hidden" name="category" value="<%= @category_filter %>">
           <input type="hidden" name="search" value="<%= @search %>">
+          <input type="hidden" name="expense_type" value="<%= @expense_type_filter %>">
           <div class="d-flex gap-2 align-items-center">
             <input type="date" name="start_date" value="<%= @start_date %>" class="form-control form-control-sm finance-filter-input finance-date-input">
             <span class="finance-filter-separator">a</span>
@@ -107,17 +124,38 @@
             </div>
             <div class="expense-row-info">
               <div class="expense-row-desc"><%= expense.description %></div>
-              <div class="expense-row-meta"><%= expense.category.name %></div>
+              <div class="expense-row-meta"><%= expense.category.name %> · <%= expense.expense_type == "fijo" ? "Fijo" : "Variable" %></div>
             </div>
-            <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
-            <div class="expense-row-amount">
-              <% if expense.currency == "USD" %>
-                <span class="expense-amount expense-amount-usd">US$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
-                <% if expense.amount_ars.present? %>
-                  <span class="expense-amount-ars-sub">~$<%= number_with_delimiter(expense.amount_ars&.round, delimiter: ".") %></span>
+            <div class="expense-row-right">
+              <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
+              <div class="expense-row-amount">
+                <% if expense.currency == "USD" %>
+                  <span class="expense-amount expense-amount-usd">US$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
+                  <% if expense.amount_ars.present? %>
+                    <span class="expense-amount-ars-sub">~$<%= number_with_delimiter(expense.amount_ars&.round, delimiter: ".") %></span>
+                  <% end %>
+                <% else %>
+                  <span class="expense-amount">$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
                 <% end %>
-              <% else %>
-                <span class="expense-amount">$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
+              </div>
+            </div>
+            <div class="expense-row-actions">
+              <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
+                            category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
+                            method: :patch do %>
+                <input type="hidden" name="expense[expense_type]" value="<%= expense.expense_type == 'fijo' ? 'variable' : 'fijo' %>">
+                <button type="submit" class="expense-action-btn expense-toggle-type"
+                        title="<%= expense.expense_type == 'fijo' ? 'Cambiar a Variable' : 'Cambiar a Fijo' %>">
+                  <i class="fas <%= expense.expense_type == 'fijo' ? 'fa-thumbtack' : 'fa-arrows-rotate' %>"></i>
+                </button>
+              <% end %>
+              <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
+                            category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
+                            method: :delete do %>
+                <button type="submit" class="expense-action-btn expense-delete-btn"
+                        title="Eliminar">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
               <% end %>
             </div>
           </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_30_180000) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_01_002028) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -112,7 +112,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_30_180000) do
     t.datetime "updated_at", null: false
     t.decimal "exchange_rate", precision: 10, scale: 4
     t.decimal "amount_ars", precision: 12, scale: 2
+    t.string "expense_type", default: "variable", null: false
     t.index ["expense_date"], name: "index_finance_expenses_on_expense_date"
+    t.index ["expense_type"], name: "index_finance_expenses_on_expense_type"
     t.index ["finance_category_id"], name: "index_finance_expenses_on_finance_category_id"
     t.index ["message_id"], name: "index_finance_expenses_on_message_id"
     t.index ["user_id", "expense_date"], name: "index_finance_expenses_on_user_id_and_expense_date"

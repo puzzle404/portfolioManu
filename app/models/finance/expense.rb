@@ -12,11 +12,13 @@ module Finance
     validates :expense_date, presence: true
     validates :description, presence: true
     validates :exchange_rate, numericality: { greater_than: 0 }, allow_nil: true
+    validates :expense_type, inclusion: { in: %w[fijo variable] }
 
     before_validation :compute_amount_ars
 
     scope :for_period, ->(start_date, end_date) { where(expense_date: start_date..end_date) }
     scope :for_category, ->(category_id) { where(finance_category_id: category_id) }
+    scope :for_expense_type, ->(type) { where(expense_type: type) }
     scope :recent, -> { order(expense_date: :desc, created_at: :desc) }
 
     private
