@@ -6,10 +6,8 @@ module Finance
       chat = ::Chat.find(chat_id)
       user = chat.user
 
-      # Set system instructions if this is the first interaction
-      if chat.messages.where(role: "system").none?
-        chat.with_instructions(system_prompt)
-      end
+      # Always update system instructions to pick up prompt changes
+      chat.with_instructions(system_prompt)
 
       # Register tools with user context
       chat.with_tool(RegisterExpenseTool.new(user))
