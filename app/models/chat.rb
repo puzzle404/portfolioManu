@@ -18,6 +18,9 @@ class Chat < ApplicationRecord
     system_msgs = messages_association.where(role: "system").order(:id).to_a
     recent_msgs = messages_association.where.not(role: "system").order(:id).last(MAX_CONTEXT_MESSAGES)
 
+    # Don't cut in the middle of a tool call sequence - trim orphaned tool messages from the start
+    recent_msgs.shift while recent_msgs.first&.role&.to_s == "tool"
+
     order_messages_for_llm(system_msgs + recent_msgs).each do |msg|
       @chat.add_message(msg.to_llm)
     end
