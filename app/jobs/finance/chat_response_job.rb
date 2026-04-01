@@ -6,8 +6,13 @@ module Finance
       chat = ::Chat.find(chat_id)
       user = chat.user
 
-      # Always update system instructions to pick up prompt changes
-      chat.with_instructions(system_prompt)
+      # Replace system instructions on every request to pick up prompt changes and update date
+      system_msg = chat.messages.find_by(role: "system")
+      if system_msg
+        system_msg.update!(content: system_prompt)
+      else
+        chat.with_instructions(system_prompt)
+      end
 
       # Register tools with user context
       chat.with_tool(RegisterExpenseTool.new(user))
@@ -47,6 +52,8 @@ module Finance
         Cuando el usuario pregunte por sus gastos (ej: "cuanto llevo este mes", "que gaste hoy"), usa list_expenses o get_balance segun corresponda.
 
         Responde siempre en espanol, de manera breve y amigable. Confirma los gastos registrados mencionando monto, categoria y fecha. Si no estas seguro de la categoria, usa la mas probable.
+
+        IMPORTANTE: Siempre que el usuario mencione un gasto, registralo con register_expense. NUNCA respondas que ya fue registrado anteriormente. Cada mensaje del usuario es una transaccion nueva e independiente, aunque la descripcion sea similar a una anterior.
 
         Las categorias disponibles son: Servicios, Comida, Transporte, Entretenimiento, Salud, Educacion, Ropa, Hogar, Suscripciones, Otros.
 
