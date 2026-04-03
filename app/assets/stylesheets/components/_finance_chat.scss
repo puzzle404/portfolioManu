@@ -620,6 +620,123 @@ $filter-h: 34px;
   color: #ef4444;
 }
 
+// Charts page
+.finance-charts-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.finance-charts-controls {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
+  .finance-filter-row {
+    justify-content: center;
+  }
+
+  .finance-filter-pills {
+    flex: 0;
+    min-width: 140px;
+  }
+}
+
+.finance-charts-period-label {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  font-variant-numeric: tabular-nums;
+}
+
+.finance-charts-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+}
+
+.finance-chart-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.finance-chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.3px;
+
+  i {
+    color: rgba(17, 186, 200, 0.6);
+  }
+}
+
+.finance-chart-container {
+  position: relative;
+  height: 220px;
+
+  &--donut {
+    height: 200px;
+  }
+}
+
+.finance-chart-legend {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.finance-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.finance-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.finance-legend-label {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.finance-legend-value {
+  color: #e2e8f0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.finance-legend-pct {
+  color: rgba(255, 255, 255, 0.3);
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: right;
+}
+
 // Table button in input bar
 .finance-table-btn {
   border: none !important;

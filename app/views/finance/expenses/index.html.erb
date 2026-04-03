@@ -2,6 +2,9 @@
   <i class="fas fa-receipt me-1"></i> Mis Gastos
 <% end %>
 <% content_for(:finance_nav_actions) do %>
+  <%= link_to finance_charts_path, class: "finance-nav-btn", title: "Graficos" do %>
+    <i class="fas fa-chart-pie"></i>
+  <% end %>
   <%= link_to finance_root_path, class: "finance-nav-btn", title: "Volver al chat" do %>
     <i class="fas fa-comment-dots"></i>
   <% end %>

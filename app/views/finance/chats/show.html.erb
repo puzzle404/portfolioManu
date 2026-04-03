@@ -2,6 +2,9 @@
   <%= link_to finance_expenses_path, class: "finance-nav-btn", title: "Ver gastos" do %>
     <i class="fas fa-table-list"></i>
   <% end %>
+  <%= link_to finance_charts_path, class: "finance-nav-btn", title: "Graficos" do %>
+    <i class="fas fa-chart-pie"></i>
+  <% end %>
 <% end %>
 
 <%= turbo_stream_from "chat_#{@chat.id}" %>

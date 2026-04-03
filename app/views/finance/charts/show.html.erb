@@ -1,0 +1,85 @@
+<% content_for(:finance_title) do %>
+  <i class="fas fa-chart-pie me-1"></i> Graficos
+<% end %>
+<% content_for(:finance_nav_actions) do %>
+  <%= link_to finance_expenses_path, class: "finance-nav-btn", title: "Ver gastos" do %>
+    <i class="fas fa-table-list"></i>
+  <% end %>
+  <%= link_to finance_root_path, class: "finance-nav-btn", title: "Volver al chat" do %>
+    <i class="fas fa-comment-dots"></i>
+  <% end %>
+<% end %>
+
+<div class="finance-charts-page" data-controller="finance-charts"
+     data-finance-charts-by-category-value="<%= @by_category.map { |cat, total| { name: cat.name, color: cat.color, total: total.to_f.round(2) } }.to_json %>"
+     data-finance-charts-daily-value="<%= @daily_accumulated.to_json %>"
+     data-finance-charts-monthly-value="<%= @monthly_history.to_json %>"
+     data-finance-charts-fixed-variable-value="<%= @fixed_vs_variable.to_json %>">
+
+  <%# Period filters %>
+  <div class="finance-charts-controls">
+    <div class="finance-filter-row">
+      <div class="finance-filter-pills">
+        <% %w[month year].each do |p| %>
+          <% label = { "month" => "Mes", "year" => "Anio" }[p] %>
+          <%= link_to label, finance_charts_path(period: p),
+              class: "btn-pill #{'active' if @period == p}" %>
+        <% end %>
+      </div>
+    </div>
+    <div class="finance-charts-period-label">
+      <span><%= l(@start_date, format: "%d/%m") %> - <%= l(@end_date, format: "%d/%m/%Y") %></span>
+    </div>
+  </div>
+
+  <div class="finance-charts-scroll">
+    <%# Chart 1: Gasto por categoria %>
+    <div class="finance-chart-card">
+      <h6 class="finance-chart-title"><i class="fas fa-chart-pie me-2"></i>Gasto por categoria</h6>
+      <% if @by_category.any? %>
+        <div class="finance-chart-container finance-chart-container--donut">
+          <canvas data-finance-charts-target="categoryChart"></canvas>
+        </div>
+        <div class="finance-chart-legend" data-finance-charts-target="categoryLegend"></div>
+      <% else %>
+        <p class="text-center text-muted py-4">Sin datos para este periodo</p>
+      <% end %>
+    </div>
+
+    <%# Chart 2: Evolucion diaria %>
+    <div class="finance-chart-card">
+      <h6 class="finance-chart-title"><i class="fas fa-chart-area me-2"></i>Acumulado diario</h6>
+      <% if @daily_accumulated.any? %>
+        <div class="finance-chart-container">
+          <canvas data-finance-charts-target="dailyChart"></canvas>
+        </div>
+      <% else %>
+        <p class="text-center text-muted py-4">Sin datos para este periodo</p>
+      <% end %>
+    </div>
+
+    <%# Chart 3: Gasto mensual historico %>
+    <div class="finance-chart-card">
+      <h6 class="finance-chart-title"><i class="fas fa-chart-bar me-2"></i>Gasto mensual</h6>
+      <% if @monthly_history.any? %>
+        <div class="finance-chart-container">
+          <canvas data-finance-charts-target="monthlyChart"></canvas>
+        </div>
+      <% else %>
+        <p class="text-center text-muted py-4">Sin datos</p>
+      <% end %>
+    </div>
+
+    <%# Chart 4: Fijo vs Variable %>
+    <div class="finance-chart-card">
+      <h6 class="finance-chart-title"><i class="fas fa-chart-column me-2"></i>Fijo vs Variable</h6>
+      <% if @fixed_vs_variable.any? %>
+        <div class="finance-chart-container">
+          <canvas data-finance-charts-target="fixedVarChart"></canvas>
+        </div>
+      <% else %>
+        <p class="text-center text-muted py-4">Sin datos</p>
+      <% end %>
+    </div>
+  </div>
+</div>
