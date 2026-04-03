@@ -10,23 +10,82 @@
   <% end %>
 <% end %>
 
+<% filter_params = { period: @period, currency: @currency_filter, category: @category_filter, expense_type: @expense_type_filter } %>
+
 <div class="finance-charts-page" data-controller="finance-charts"
      data-finance-charts-by-category-value="<%= @by_category.map { |cat, total| { name: cat.name, color: cat.color, total: total.to_f.round(2) } }.to_json %>"
      data-finance-charts-daily-value="<%= @daily_accumulated.to_json %>"
      data-finance-charts-monthly-value="<%= @monthly_history.to_json %>"
      data-finance-charts-fixed-variable-value="<%= @fixed_vs_variable.to_json %>">
 
-  <%# Period filters %>
   <div class="finance-charts-controls">
+    <%# Row 1: Period + Currency %>
     <div class="finance-filter-row">
       <div class="finance-filter-pills">
-        <% %w[month year].each do |p| %>
-          <% label = { "month" => "Mes", "year" => "Anio" }[p] %>
-          <%= link_to label, finance_charts_path(period: p),
+        <% %w[today week month year].each do |p| %>
+          <% label = { "today" => "Hoy", "week" => "Sem", "month" => "Mes", "year" => "Anio" }[p] %>
+          <%= link_to label, finance_charts_path(filter_params.merge(period: p)),
               class: "btn-pill #{'active' if @period == p}" %>
         <% end %>
       </div>
+      <span class="finance-filter-divider"></span>
+      <div class="finance-filter-pills">
+        <%= link_to "$", finance_charts_path(filter_params.except(:currency)),
+            class: "btn-pill #{'active' if @currency_filter.blank?}",
+            title: "Todas las monedas" %>
+        <%= link_to "ARS", finance_charts_path(filter_params.merge(currency: "ARS")),
+            class: "btn-pill #{'active' if @currency_filter == 'ARS'}" %>
+        <%= link_to "USD", finance_charts_path(filter_params.merge(currency: "USD")),
+            class: "btn-pill #{'active' if @currency_filter == 'USD'}" %>
+      </div>
     </div>
+
+    <%# Row 2: Expense Type %>
+    <div class="finance-filter-row">
+      <div class="finance-filter-pills">
+        <%= link_to "Todos", finance_charts_path(filter_params.except(:expense_type)),
+            class: "btn-pill #{'active' if @expense_type_filter.blank?}" %>
+        <%= link_to "Fijos", finance_charts_path(filter_params.merge(expense_type: "fijo")),
+            class: "btn-pill #{'active' if @expense_type_filter == 'fijo'}" %>
+        <%= link_to "Variables", finance_charts_path(filter_params.merge(expense_type: "variable")),
+            class: "btn-pill #{'active' if @expense_type_filter == 'variable'}" %>
+      </div>
+      <span class="finance-filter-divider"></span>
+      <div class="finance-filter-select">
+        <select class="form-select form-select-sm finance-filter-input"
+                onchange="Turbo.visit(this.value)">
+          <option value="<%= finance_charts_path(filter_params.except(:category)) %>"
+                  <%= 'selected' if @category_filter.blank? %>>
+            Categoria
+          </option>
+          <% @categories.each do |cat| %>
+            <option value="<%= finance_charts_path(filter_params.merge(category: cat.id)) %>"
+                    <%= 'selected' if @category_filter == cat.id.to_s %>>
+              <%= cat.name %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+
+    <%# Row 3: Custom date range %>
+    <div class="finance-filter-dates">
+      <%= form_with url: finance_charts_path, method: :get do %>
+        <input type="hidden" name="period" value="custom">
+        <input type="hidden" name="currency" value="<%= @currency_filter %>">
+        <input type="hidden" name="category" value="<%= @category_filter %>">
+        <input type="hidden" name="expense_type" value="<%= @expense_type_filter %>">
+        <div class="d-flex gap-2 align-items-center">
+          <input type="date" name="start_date" value="<%= @start_date %>" class="form-control form-control-sm finance-filter-input finance-date-input">
+          <span class="finance-filter-separator">a</span>
+          <input type="date" name="end_date" value="<%= @end_date %>" class="form-control form-control-sm finance-filter-input finance-date-input">
+          <button type="submit" class="btn btn-sm finance-filter-apply">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      <% end %>
+    </div>
+
     <div class="finance-charts-period-label">
       <span><%= l(@start_date, format: "%d/%m") %> - <%= l(@end_date, format: "%d/%m/%Y") %></span>
     </div>

@@ -2,6 +2,10 @@ module Finance
   class ChartsController < BaseController
     def show
       @period = params[:period].presence || "month"
+      @currency_filter = params[:currency].presence
+      @category_filter = params[:category].presence
+      @expense_type_filter = params[:expense_type].presence
+
       dates = resolve_dates(@period, params[:start_date], params[:end_date])
       @start_date = dates[:start]
       @end_date = dates[:end]
@@ -9,6 +13,10 @@ module Finance
       expenses = current_user.finance_expenses
                              .for_period(@start_date, @end_date)
                              .includes(:category)
+
+      expenses = expenses.where(currency: @currency_filter) if @currency_filter.present?
+      expenses = expenses.where(finance_category_id: @category_filter) if @category_filter.present?
+      expenses = expenses.for_expense_type(@expense_type_filter) if @expense_type_filter.present?
 
       @by_category = expenses.group(:finance_category_id)
                              .sum(:amount_ars)
@@ -18,8 +26,9 @@ module Finance
       @daily_accumulated = build_daily_accumulated(expenses)
 
       @monthly_history = build_monthly_history
-
       @fixed_vs_variable = build_fixed_vs_variable
+
+      @categories = Finance::Category.order(:name)
     end
 
     private
@@ -38,6 +47,14 @@ module Finance
       end
     end
 
+    def filtered_scope
+      scope = current_user.finance_expenses
+      scope = scope.where(currency: @currency_filter) if @currency_filter.present?
+      scope = scope.where(finance_category_id: @category_filter) if @category_filter.present?
+      scope = scope.for_expense_type(@expense_type_filter) if @expense_type_filter.present?
+      scope
+    end
+
     def build_daily_accumulated(expenses)
       daily = expenses.group(:expense_date).sum(:amount_ars)
       accumulated = 0
@@ -49,20 +66,20 @@ module Finance
 
     def build_monthly_history
       start = 5.months.ago.beginning_of_month.to_date
-      current_user.finance_expenses
-                  .where(expense_date: start..Date.current.end_of_month)
-                  .group("DATE_TRUNC('month', expense_date)")
-                  .sum(:amount_ars)
-                  .sort_by { |date, _| date }
-                  .map { |date, total| { month: date.strftime("%b %y"), total: total.to_f.round(2) } }
+      filtered_scope
+        .where(expense_date: start..Date.current.end_of_month)
+        .group("DATE_TRUNC('month', expense_date)")
+        .sum(:amount_ars)
+        .sort_by { |date, _| date }
+        .map { |date, total| { month: date.strftime("%b %y"), total: total.to_f.round(2) } }
     end
 
     def build_fixed_vs_variable
       start = 5.months.ago.beginning_of_month.to_date
-      data = current_user.finance_expenses
-                         .where(expense_date: start..Date.current.end_of_month)
-                         .group("DATE_TRUNC('month', expense_date)", :expense_type)
-                         .sum(:amount_ars)
+      data = filtered_scope
+               .where(expense_date: start..Date.current.end_of_month)
+               .group("DATE_TRUNC('month', expense_date)", :expense_type)
+               .sum(:amount_ars)
 
       months = data.keys.map(&:first).uniq.sort
       months.map do |month|
