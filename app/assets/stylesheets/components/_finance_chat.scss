@@ -831,7 +831,7 @@ $filter-h: 34px;
 }
 
 .split-avatar--payer {
-  box-shadow: 0 0 0 1.5px #4ade80;
+  box-shadow: 0 0 0 2px #4ade80;
 }
 
 .split-bar {
@@ -885,6 +885,18 @@ $filter-h: 34px;
     text-overflow: ellipsis;
     vertical-align: bottom;
   }
+
+}
+
+.split-paid {
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.14);
 }
 
 .expense-split-edit {

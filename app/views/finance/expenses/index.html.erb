@@ -129,7 +129,6 @@
               <div class="expense-row-desc"><%= expense.description %></div>
               <div class="expense-row-meta">
                 <%= expense.category.name %> · <%= expense.expense_type == "fijo" ? "Fijo" : "Variable" %>
-                <% if expense.shared? %>· pago <%= expense.payer_id == current_user.id ? "vos" : expense.payer&.display_name %><% end %>
               </div>
               <% if expense.shared? %>
                 <% partner = expense.group.other_member(current_user) %>
@@ -137,15 +136,18 @@
                 <% partner_share = partner ? expense.amount_ars_for(partner) : 0 %>
                 <% total = expense.amount_ars.to_f %>
                 <% my_percent = total.positive? ? (my_share.to_f / total * 100).round : 50 %>
+                <% i_paid = expense.payer_id == current_user.id %>
                 <div class="expense-split">
                   <div class="expense-split-track">
-                    <span class="split-avatar split-avatar--me <%= 'split-avatar--payer' if expense.payer_id == current_user.id %>"
-                          title="Vos<%= ' (pago)' if expense.payer_id == current_user.id %>"><%= current_user.display_name.first.upcase %></span>
+                    <span class="split-avatar split-avatar--me <%= 'split-avatar--payer' if i_paid %>"
+                          title="Vos<%= ' (pagaste)' if i_paid %>"><%= current_user.display_name.first.upcase %></span>
+                    <% if i_paid %><span class="split-paid">pagaste</span><% end %>
                     <div class="split-bar" role="img" aria-label="Tu parte <%= my_percent %>%">
                       <div class="split-bar-fill" style="width: <%= my_percent %>%"></div>
                     </div>
-                    <span class="split-avatar split-avatar--partner <%= 'split-avatar--payer' if partner && expense.payer_id == partner.id %>"
-                          title="<%= partner&.display_name %><%= ' (pago)' if partner && expense.payer_id == partner.id %>"><%= partner&.display_name&.first&.upcase %></span>
+                    <% unless i_paid %><span class="split-paid">pago</span><% end %>
+                    <span class="split-avatar split-avatar--partner <%= 'split-avatar--payer' unless i_paid %>"
+                          title="<%= partner&.display_name %><%= ' (pago)' unless i_paid %>"><%= partner&.display_name&.first&.upcase %></span>
                   </div>
                   <div class="expense-split-legend">
                     <span class="split-legend-me">vos $<%= number_with_delimiter(my_share.round, delimiter: ".") %></span>
