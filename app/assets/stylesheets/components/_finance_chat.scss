@@ -757,3 +757,40 @@ $filter-h: 34px;
     transform: scale(0.92);
   }
 }
+
+.finance-shared-card {
+  margin: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+
+.finance-invite-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 28px;
+  letter-spacing: 4px;
+  font-weight: 700;
+}
+
+.finance-settlement-row .expense-row-icon {
+  color: #22c55e;
+}
+
+.expense-shared-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.25);
+  color: #c7d2fe;
+}
+
+.expense-share-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  input { width: 90px; }
+}
