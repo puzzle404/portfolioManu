@@ -65,5 +65,20 @@ module Finance
       assert_equal BigDecimal("5000"), expense.reload.amount_ars_for(users(:manu))
       assert_equal BigDecimal("5000"), expense.amount_ars_for(users(:novia))
     end
+
+    test "a share on a personal expense does not grant visibility" do
+      expense = finance_expenses(:super_compartido)
+      expense.update_column(:group_id, nil)
+      assert_not_includes Finance::Expense.visible_to(users(:novia)), expense
+      assert_includes Finance::Expense.visible_to(users(:manu)), expense
+    end
+
+    test "destroying a group removes its expenses' shares and makes them personal" do
+      group = finance_groups(:pareja)
+      group.destroy!
+      expense = finance_expenses(:super_compartido).reload
+      assert_nil expense.group_id
+      assert_equal 0, expense.shares.count
+    end
   end
 end

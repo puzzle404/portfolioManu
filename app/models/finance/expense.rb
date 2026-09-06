@@ -32,7 +32,7 @@ module Finance
     scope :visible_to, lambda { |user|
       where(user_id: user.id, group_id: nil)
         .or(where(payer_id: user.id).where.not(group_id: nil))
-        .or(where(id: Finance::ExpenseShare.select(:expense_id).where(user_id: user.id)))
+        .or(where(id: Finance::ExpenseShare.select(:expense_id).where(user_id: user.id)).where.not(group_id: nil))
     }
 
     def shared?

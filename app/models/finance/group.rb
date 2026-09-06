@@ -15,6 +15,7 @@ module Finance
 
     before_validation :generate_invite_code, on: :create
     after_create :add_owner_membership
+    before_destroy :remove_expense_shares, prepend: true
 
     def full?
       memberships.count >= MAX_MEMBERS
@@ -43,6 +44,10 @@ module Finance
 
     def add_owner_membership
       memberships.create!(user: owner)
+    end
+
+    def remove_expense_shares
+      Finance::ExpenseShare.where(expense_id: expenses.select(:id)).delete_all
     end
   end
 end
