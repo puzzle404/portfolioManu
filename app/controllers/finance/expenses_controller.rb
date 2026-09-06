@@ -4,22 +4,26 @@ module Finance
       read_filters
       resolve_period
       @expenses = filtered_expenses.recent.limit(50)
-      @total_ars = compute_total_ars
+      @settlements = period_settlements
+      @rows = Finance::ExpenseFeed.merge(@expenses, @settlements)
+      @paid_ars = compute_paid_ars
+      @settlements_net_ars = filters_active? ? BigDecimal("0") : spending_query.settlements_net_ars
+      @total_ars = @paid_ars + @settlements_net_ars
       @categories = Finance::Category.order(:name)
     end
 
     def update
       @expense = Finance::Expense.visible_to(current_user).find(params[:id])
       apply_update
-      redirect_to finance_expenses_path(**filter_params), notice: "Gasto actualizado"
+      redirect_to after_change_path, notice: "Gasto actualizado"
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
-      redirect_to finance_expenses_path(**filter_params), alert: "Error al actualizar: #{e.message}"
+      redirect_to after_change_path, alert: "Error al actualizar: #{e.message}"
     end
 
     def destroy
       @expense = Finance::Expense.visible_to(current_user).find(params[:id])
       @expense.destroy
-      redirect_to finance_expenses_path(**filter_params), notice: "Gasto eliminado"
+      redirect_to after_change_path, notice: "Gasto eliminado"
     end
 
     private
@@ -43,7 +47,7 @@ module Finance
     end
 
     def build_filtered_expenses
-      expenses = Finance::Expense.visible_to(current_user)
+      expenses = Finance::Expense.paid_by(current_user)
                                  .for_period(@start_date, @end_date)
                                  .includes(:category, :payer, :group, shares: :user)
 
@@ -54,10 +58,26 @@ module Finance
       expenses
     end
 
-    def compute_total_ars
-      return filtered_expenses.sum { |e| e.amount_ars_for(current_user) } if @search.present?
+    def filters_active?
+      @search.present? || @currency_filter.present? || @category_filter.present? || @expense_type_filter.present?
+    end
 
-      spending_query.total_ars
+    def period_settlements
+      return Finance::Settlement.none if filters_active?
+
+      Finance::ExpenseFeed.settlements_for(current_user, @start_date, @end_date)
+    end
+
+    def compute_paid_ars
+      return filtered_expenses.sum { |expense| expense.amount_ars || 0 } if @search.present?
+
+      spending_query.expenses_total_ars
+    end
+
+    def after_change_path
+      return finance_shared_path if params[:return_to] == "shared"
+
+      finance_expenses_path(**filter_params)
     end
 
     def spending_query
@@ -67,46 +87,11 @@ module Finance
     end
 
     def apply_update
-      Finance::Expense.transaction do
-        @expense.update!(expense_params) if expense_params.present?
-        apply_sharing_change
-        apply_my_share_change
-      end
-    end
-
-    def apply_sharing_change
-      shared_param = params.dig(:expense, :shared)
-      return if shared_param.nil?
-
-      unless @expense.user_id == current_user.id
-        raise ArgumentError, "Solo quien cargo el gasto puede cambiar si es compartido"
-      end
-
-      ActiveModel::Type::Boolean.new.cast(shared_param) ? enable_sharing : disable_sharing
-    end
-
-    def enable_sharing
-      group = current_user.shared_group
-      raise ArgumentError, "No tenes un espacio compartido completo" if group.nil? || !group.full?
-      raise ArgumentError, "No se puede compartir un gasto sin monto en pesos" if @expense.amount_ars.nil?
-
-      @expense.share_with!(group, payer: @expense.payer || current_user) unless @expense.shared?
-    end
-
-    def disable_sharing
-      @expense.unshare! if @expense.shared?
-    end
-
-    def apply_my_share_change
-      my_share = params.dig(:expense, :my_share_amount)
-      return if my_share.blank? || !@expense.shared?
-
-      mine = BigDecimal(my_share.to_s)
-      other = @expense.group.other_member(current_user)
-      raise ArgumentError, "Tu parte no puede superar el total" if mine > @expense.amount || mine.negative?
-
-      rows = Finance::SplitCalculator.by_amount(@expense, { current_user => mine, other => @expense.amount - mine })
-      @expense.assign_shares!(rows)
+      Finance::ExpenseUpdater.new(@expense, current_user).call(
+        attributes: expense_params,
+        shared: params.dig(:expense, :shared),
+        my_share_amount: params.dig(:expense, :my_share_amount)
+      )
     end
 
     def expense_params

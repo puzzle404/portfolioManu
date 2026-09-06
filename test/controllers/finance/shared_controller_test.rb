@@ -23,6 +23,10 @@ module Finance
       assert_select "body", /Novia/
       assert_select "body", /ABCD1234/
       assert_select "body", /3\.000/
+      assert_select ".expense-split .split-bar-fill[style*=?]", "width: 50%", minimum: 1
+      assert_select ".split-paid", /pagaste/
+      assert_select "input[name='expense[my_share_amount]'][value=?]", "4000.00"
+      assert_select "input[name=return_to][value=shared]", minimum: 1
     end
 
     test "show prefills the settle form for the debtor" do

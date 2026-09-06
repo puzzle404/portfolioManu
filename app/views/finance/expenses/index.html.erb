@@ -108,11 +108,18 @@
 
     <div class="finance-expenses-total">
       <div class="total-label">Total &middot; <%= @start_date.strftime("%d/%m/%Y") %> a <%= @end_date.strftime("%d/%m/%Y") %></div>
-      <div class="total-amount">$<%= number_with_delimiter(@total_ars || 0, delimiter: ".") %> <small style="font-size: 14px; font-weight: 500; opacity: 0.5;">ARS</small></div>
+      <div class="total-amount">$<%= money(@total_ars) %> <small style="font-size: 14px; font-weight: 500; opacity: 0.5;">ARS</small></div>
+      <% if @settlements_net_ars && !@settlements_net_ars.zero? %>
+        <div class="total-breakdown">
+          Pagaste $<%= money(@paid_ars) %>
+          &middot; saldos con <%= current_user.shared_group&.other_member(current_user)&.display_name %>
+          <span class="<%= @settlements_net_ars.negative? ? 'is-negative' : 'is-positive' %>"><%= @settlements_net_ars.negative? ? "-" : "+" %>$<%= money(@settlements_net_ars.abs) %></span>
+        </div>
+      <% end %>
     </div>
 
     <div class="finance-expenses-scroll">
-      <% if @expenses.empty? %>
+      <% if @rows.empty? %>
         <div class="text-center py-5 expense-empty">
           <i class="fas fa-inbox d-block mb-2"></i>
           No hay gastos en este periodo
@@ -120,101 +127,87 @@
       <% end %>
 
       <div class="finance-expense-list">
-        <% @expenses.each do |expense| %>
-          <div class="finance-expense-row">
-            <div class="expense-row-icon <%= 'expense-row-icon--shared' if expense.shared? %>">
-              <i class="fas <%= expense.category.icon %>"></i>
-            </div>
-            <div class="expense-row-info">
-              <div class="expense-row-desc"><%= expense.description %></div>
-              <div class="expense-row-meta">
-                <%= expense.category.name %> · <%= expense.expense_type == "fijo" ? "Fijo" : "Variable" %>
+        <% @rows.each do |row| %>
+          <% if row.is_a?(Finance::Settlement) %>
+            <% sent = row.sent_by?(current_user) %>
+            <div class="finance-expense-row finance-settlement-row">
+              <div class="expense-row-icon"><i class="fas fa-money-bill-transfer"></i></div>
+              <div class="expense-row-info">
+                <div class="expense-row-desc">
+                  <% if sent %>Le pagaste a <%= row.to_user.display_name %><% else %><%= row.from_user.display_name %> te pago<% end %>
+                </div>
+                <div class="expense-row-meta"><%= row.description.presence || "Saldo de gastos compartidos" %></div>
               </div>
-              <% if expense.shared? %>
-                <% partner = expense.group.other_member(current_user) %>
-                <% my_share = expense.amount_ars_for(current_user) %>
-                <% partner_share = partner ? expense.amount_ars_for(partner) : 0 %>
-                <% total = expense.amount_ars.to_f %>
-                <% my_percent = total.positive? ? (my_share.to_f / total * 100).round : 50 %>
-                <% i_paid = expense.payer_id == current_user.id %>
-                <div class="expense-split">
-                  <div class="expense-split-track">
-                    <span class="split-avatar split-avatar--me <%= 'split-avatar--payer' if i_paid %>"
-                          title="Vos<%= ' (pagaste)' if i_paid %>"><%= current_user.display_name.first.upcase %></span>
-                    <% if i_paid %><span class="split-paid">pagaste</span><% end %>
-                    <div class="split-bar" role="img" aria-label="Tu parte <%= my_percent %>%">
-                      <div class="split-bar-fill" style="width: <%= my_percent %>%"></div>
-                    </div>
-                    <% unless i_paid %><span class="split-paid">pago</span><% end %>
-                    <span class="split-avatar split-avatar--partner <%= 'split-avatar--payer' unless i_paid %>"
-                          title="<%= partner&.display_name %><%= ' (pago)' unless i_paid %>"><%= partner&.display_name&.first&.upcase %></span>
-                  </div>
-                  <div class="expense-split-legend">
-                    <span class="split-legend-me">vos $<%= number_with_delimiter(my_share.round, delimiter: ".") %></span>
-                    <span class="split-legend-partner"><span class="split-name"><%= partner&.display_name %></span> $<%= number_with_delimiter(partner_share.round, delimiter: ".") %></span>
-                  </div>
-                  <% if expense.currency == "ARS" %>
-                    <details class="expense-split-edit">
-                      <summary>ajustar mi parte</summary>
-                      <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
-                                    category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
-                                    method: :patch do %>
-                        <input type="number" step="0.01" min="0" max="<%= number_with_precision(expense.amount, precision: 2) %>"
-                               name="expense[my_share_amount]" aria-label="Tu parte en pesos"
-                               value="<%= number_with_precision(expense.share_for(current_user)&.amount, precision: 2) %>">
-                        <button type="submit" aria-label="Guardar mi parte" title="Guardar mi parte"><i class="fas fa-check"></i></button>
-                      <% end %>
-                    </details>
+              <div class="expense-row-right">
+                <div class="expense-row-date"><%= row.settled_on.strftime("%d/%m") %></div>
+                <div class="expense-row-amount">
+                  <span class="expense-amount <%= 'expense-amount--credit' unless sent %>"><%= sent ? "" : "-" %>$<%= money(row.amount_ars) %></span>
+                </div>
+              </div>
+              <div class="expense-row-actions"></div>
+            </div>
+          <% else %>
+            <% expense = row %>
+            <div class="finance-expense-row">
+              <div class="expense-row-icon <%= 'expense-row-icon--shared' if expense.shared? %>">
+                <i class="fas <%= expense.category.icon %>"></i>
+              </div>
+              <div class="expense-row-info">
+                <div class="expense-row-desc"><%= expense.description %></div>
+                <div class="expense-row-meta">
+                  <%= expense.category.name %> · <%= expense.expense_type == "fijo" ? "Fijo" : "Variable" %>
+                  <% if expense.shared? %>
+                    <% partner = expense.group.other_member(current_user) %>
+                    <% total = expense.amount_ars.to_f %>
+                    <% my_percent = total.positive? ? (expense.amount_ars_for(current_user).to_f / total * 100).round : 50 %>
+                    <span class="expense-shared-note"><span class="note-label">compartido con</span> <span class="split-name"><%= partner&.display_name %></span> <span class="note-percent">(<%= my_percent %>%)</span></span>
                   <% end %>
                 </div>
-              <% end %>
-            </div>
-            <div class="expense-row-right">
-              <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
-              <div class="expense-row-amount">
-                <% if expense.shared? %>
-                  <span class="expense-amount">$<%= number_with_delimiter(expense.amount_ars_for(current_user).round, delimiter: ".") %></span>
-                  <span class="expense-amount-ars-sub">de $<%= number_with_delimiter(expense.amount_ars&.round, delimiter: ".") %></span>
-                <% elsif expense.currency == "USD" %>
-                  <span class="expense-amount expense-amount-usd">US$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
-                  <% if expense.amount_ars.present? %>
-                    <span class="expense-amount-ars-sub">~$<%= number_with_delimiter(expense.amount_ars&.round, delimiter: ".") %></span>
-                  <% end %>
-                <% else %>
-                  <span class="expense-amount">$<%= number_with_delimiter(expense.amount, delimiter: ".") %></span>
-                <% end %>
               </div>
-            </div>
-            <div class="expense-row-actions">
-              <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
-                            category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
-                            method: :patch do %>
-                <input type="hidden" name="expense[expense_type]" value="<%= expense.expense_type == 'fijo' ? 'variable' : 'fijo' %>">
-                <button type="submit" class="expense-action-btn expense-toggle-type"
-                        title="<%= expense.expense_type == 'fijo' ? 'Cambiar a Variable' : 'Cambiar a Fijo' %>">
-                  <i class="fas <%= expense.expense_type == 'fijo' ? 'fa-thumbtack' : 'fa-arrows-rotate' %>"></i>
-                </button>
-              <% end %>
-              <% if current_user.shared_group&.full? && expense.user_id == current_user.id %>
+              <div class="expense-row-right">
+                <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
+                <div class="expense-row-amount">
+                  <% if expense.currency == "USD" %>
+                    <span class="expense-amount expense-amount-usd">US$<%= money(expense.amount) %></span>
+                    <% if expense.amount_ars.present? %>
+                      <span class="expense-amount-ars-sub">~$<%= money(expense.amount_ars) %></span>
+                    <% end %>
+                  <% else %>
+                    <span class="expense-amount">$<%= money(expense.amount) %></span>
+                  <% end %>
+                </div>
+              </div>
+              <div class="expense-row-actions">
                 <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
                               category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
                               method: :patch do %>
-                  <input type="hidden" name="expense[shared]" value="<%= expense.shared? ? '0' : '1' %>">
-                  <button type="submit" class="expense-action-btn" title="<%= expense.shared? ? 'Hacer personal' : 'Compartir' %>">
-                    <i class="fas <%= expense.shared? ? 'fa-user' : 'fa-user-friends' %>"></i>
+                  <input type="hidden" name="expense[expense_type]" value="<%= expense.expense_type == 'fijo' ? 'variable' : 'fijo' %>">
+                  <button type="submit" class="expense-action-btn expense-toggle-type"
+                          title="<%= expense.expense_type == 'fijo' ? 'Cambiar a Variable' : 'Cambiar a Fijo' %>">
+                    <i class="fas <%= expense.expense_type == 'fijo' ? 'fa-thumbtack' : 'fa-arrows-rotate' %>"></i>
                   </button>
                 <% end %>
-              <% end %>
-              <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
-                            category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
-                            method: :delete do %>
-                <button type="submit" class="expense-action-btn expense-delete-btn"
-                        title="Eliminar">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              <% end %>
+                <% if current_user.shared_group&.full? && expense.user_id == current_user.id %>
+                  <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
+                                category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
+                                method: :patch do %>
+                    <input type="hidden" name="expense[shared]" value="<%= expense.shared? ? '0' : '1' %>">
+                    <button type="submit" class="expense-action-btn" title="<%= expense.shared? ? 'Hacer personal' : 'Compartir' %>">
+                      <i class="fas <%= expense.shared? ? 'fa-user' : 'fa-user-friends' %>"></i>
+                    </button>
+                  <% end %>
+                <% end %>
+                <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
+                              category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
+                              method: :delete do %>
+                  <button type="submit" class="expense-action-btn expense-delete-btn"
+                          title="Eliminar">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                <% end %>
+              </div>
             </div>
-          </div>
+          <% end %>
         <% end %>
       </div>
     </div>

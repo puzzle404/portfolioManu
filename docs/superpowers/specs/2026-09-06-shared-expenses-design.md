@@ -113,21 +113,26 @@ aditiva:
 
 ## Semántica de "mis gastos"
 
-Lo que un usuario gastó en un período es: **sus gastos personales al 100%
-más su share de cada gasto compartido en el que participa**, no lo que
-pagó de su bolsillo.
+**Revisado el 2026-09-06 tras las pruebas con datos reales.** La primera
+versión sumaba "personales al 100% más mi share de los compartidos" y
+resultó confusa: el usuario veía montos que no había pagado. La regla
+vigente es:
 
-- Scope `Finance::Expense.visible_to(user)`: personales con
-  `user_id = user` OR compartidos donde el user tiene share o es `payer`.
-- Servicio `Finance::SpendingQuery.new(user, start_date:, end_date:,
-  filters:)` con métodos `total_ars`, `by_category`, `by_date`,
-  `by_month`, `by_month_and_type`. Internamente suma `amount_ars` de los
-  personales y `finance_expense_shares.amount_ars` de los compartidos.
-  Reemplaza los `.sum(:amount_ars)` de `ChartsController`,
-  `ExpensesController` y los tools. Es la única fuente de verdad para
-  agregaciones.
-- Scope `shared` (para la pantalla Compartido y `scope: "shared"` en
-  tools): gastos con `group_id = user.shared_group.id`, montos completos.
+- **"Mis gastos" es lo que salió del bolsillo del usuario**: los gastos en
+  los que es `payer`, personales o compartidos, al monto completo
+  (`Finance::Expense.paid_by(user)`). Un gasto compartido que pagó la
+  pareja no aparece en la lista personal, aunque lo haya cargado el
+  usuario; vive en la pantalla Compartido.
+- **Los saldos ajustan el total**: una transferencia enviada suma, una
+  recibida resta. Se listan como filas en "Mis gastos" ("Le pagaste a X",
+  "X te pago"). Con un filtro de categoría, tipo, moneda o búsqueda activo
+  los saldos no se aplican.
+- La fila de un gasto compartido en "Mis gastos" muestra el monto completo
+  y una nota "compartido con X (N%)". El detalle del reparto (barra,
+  quién pagó, partes, ajustar mi parte) está solo en `/finance/shared`.
+- `Finance::SpendingQuery` implementa esta regla para listados, gráficos
+  y tools. `Finance::Expense.visible_to(user)` queda solo para
+  autorización (editar/borrar).
 
 ## Split
 

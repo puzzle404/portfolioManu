@@ -9,8 +9,8 @@ class ListExpensesTool < RubyLLM::Tool
   param :category, desc: "Category name to filter by (optional)", required: false
   param :expense_type, desc: "Filter by type: 'fijo' (fixed) or 'variable'. Optional, shows all if omitted.",
                        required: false
-  param :scope, desc: "'personal' (default: my expenses plus my share of shared ones) or 'shared' " \
-                      "(only shared expenses).", required: false
+  param :scope, desc: "'personal' (default: expenses the user paid, full amounts, adjusted by settlements) or " \
+                      "'shared' (only shared expenses, who paid).", required: false
 
   def initialize(user)
     @user = user
@@ -24,21 +24,21 @@ class ListExpensesTool < RubyLLM::Tool
     expenses = expenses.for_period(dates[:start], dates[:end])
     expenses = filter_by_category(expenses, category)
     expenses = expenses.for_expense_type(expense_type) if expense_type.present?
-    expenses = expenses.includes(:category, :payer, shares: :user).recent
+    expenses = expenses.includes(:category, :payer, :group, shares: :user).recent
 
-    {
+    response = {
       period: "#{dates[:start]} a #{dates[:end]}",
       scope: scope,
-      total_ars: total_for(expenses, scope),
       count: expenses.count,
       expenses: expenses.limit(20).map { |expense| serialize(expense) }
     }
+    response.merge(totals_for(expenses, scope, dates, category, expense_type))
   end
 
   private
 
   def base_scope(scope)
-    return Finance::Expense.visible_to(@user) unless scope == "shared"
+    return Finance::Expense.paid_by(@user) unless scope == "shared"
 
     group = @user.shared_group
     group && Finance::Expense.in_group(group)
@@ -51,12 +51,20 @@ class ListExpensesTool < RubyLLM::Tool
     cat ? expenses.for_category(cat.id) : expenses
   end
 
-  def total_for(expenses, scope)
-    # Ruby-level sum: expenses is eager-loaded with shares (has_many), and a SQL-level
-    # sum(:amount_ars) here would double-count rows because of the join duplication.
-    return expenses.sum { |expense| expense.amount_ars || 0 }.to_f if scope == "shared"
+  # Ruby-level sums: expenses is eager-loaded with shares (has_many), and a SQL-level
+  # sum(:amount_ars) here would double-count rows because of the join duplication.
+  def totals_for(expenses, scope, dates, category, expense_type)
+    paid = expenses.sum { |expense| expense.amount_ars || 0 }
+    return { total_ars: paid.to_f } if scope == "shared"
 
-    expenses.sum { |expense| expense.amount_ars_for(@user) }.to_f
+    net = settlements_net(dates, category, expense_type)
+    { paid_ars: paid.to_f, settlements_net_ars: net.to_f, total_ars: (paid + net).to_f }
+  end
+
+  def settlements_net(dates, category, expense_type)
+    cat = category.present? ? Finance::Category.find_by(name: category) : nil
+    Finance::SpendingQuery.new(@user, start_date: dates[:start], end_date: dates[:end],
+                                      category_id: cat&.id, expense_type: expense_type).settlements_net_ars
   end
 
   def serialize(expense)
@@ -65,9 +73,16 @@ class ListExpensesTool < RubyLLM::Tool
     item[:amount_ars] = expense.amount_ars.to_f if expense.currency == "USD"
     if expense.shared?
       item[:paid_by] = expense.payer&.display_name
+      item[:shared_with] = expense.group.other_member(@user)&.display_name
       item[:my_share_ars] = expense.amount_ars_for(@user).to_f
+      item[:my_percent] = my_percent(expense)
     end
     item
+  end
+
+  def my_percent(expense)
+    total = expense.amount_ars.to_f
+    total.positive? ? (expense.amount_ars_for(@user).to_f / total * 100).round : 50
   end
 
   def missing_group_error

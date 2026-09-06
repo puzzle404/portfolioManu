@@ -13,6 +13,16 @@ module Finance
     validate :parties_are_members
 
     scope :recent, -> { order(settled_on: :desc, created_at: :desc) }
+    scope :for_period, ->(start_date, end_date) { where(settled_on: start_date..end_date) }
+    scope :involving, ->(user) { where("from_user_id = :id OR to_user_id = :id", id: user.id) }
+
+    def counterpart_for(user)
+      from_user_id == user.id ? to_user : from_user
+    end
+
+    def sent_by?(user)
+      from_user_id == user.id
+    end
 
     private
 

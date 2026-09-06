@@ -779,6 +779,50 @@ $filter-h: 34px;
   color: #22c55e;
 }
 
+// Shared expense in "Mis Gastos": a short note; the split detail lives in the shared screen
+.expense-shared-note {
+  color: #a5b4fc;
+  white-space: nowrap;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  max-width: 100%;
+  min-width: 0;
+
+  .note-label,
+  .note-percent {
+    flex-shrink: 0;
+  }
+
+  .split-name {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.expense-amount--credit {
+  color: #4ade80 !important;
+}
+
+.finance-expenses-total .total-breakdown {
+  margin-top: 4px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-variant-numeric: tabular-nums;
+
+  .is-negative {
+    color: #4ade80;
+    font-weight: 700;
+  }
+
+  .is-positive {
+    color: #fbbf24;
+    font-weight: 700;
+  }
+}
+
 // Shared expense: split bar between the two members
 .expense-row-icon--shared {
   position: relative;

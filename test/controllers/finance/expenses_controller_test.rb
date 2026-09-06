@@ -2,14 +2,30 @@ require "test_helper"
 
 module Finance
   class ExpensesControllerTest < ActionDispatch::IntegrationTest
-    test "index shows my share for shared expenses and total of personal plus shares" do
+    test "index lists what I paid at full amount, notes the split, and totals it" do
       sign_in users(:manu)
       get finance_expenses_path
       assert_response :success
-      assert_select ".expense-split .split-bar-fill[style*=?]", "width: 50%", minimum: 1
-      assert_select ".expense-split-legend", /vos \$4\.000/
-      assert_select "body", /8\.000/
-      assert_select "input[name='expense[my_share_amount]'][value=?][max=?]", "4000.00", "8000.00"
+      assert_select ".expense-row-meta", /compartido con Novia \(50%\)/
+      assert_select ".total-amount", /11\.000/
+      assert_select ".expense-split", count: 0
+      assert_select "body", { text: /Luz/, count: 0 }
+    end
+
+    test "index shows settlements as rows and adjusts the total" do
+      Finance::Settlement.create!(group: finance_groups(:pareja), from_user: users(:novia), to_user: users(:manu),
+                                  amount_ars: 1000, settled_on: Date.current)
+      sign_in users(:manu)
+      get finance_expenses_path
+      assert_select ".finance-settlement-row", /Novia te pago/
+      assert_select ".total-amount", /10\.000/
+      assert_select ".total-breakdown", /-\$1\.000/
+    end
+
+    test "update with return_to shared redirects to the shared screen" do
+      sign_in users(:manu)
+      patch finance_expense_path(finance_expenses(:super_compartido)), params: { expense: { my_share_amount: "6000" }, return_to: "shared" }
+      assert_redirected_to finance_shared_path
     end
 
     test "non member cannot update a shared expense" do

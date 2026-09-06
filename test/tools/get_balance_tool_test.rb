@@ -1,11 +1,14 @@
 require "test_helper"
 
 class GetBalanceToolTest < ActiveSupport::TestCase
-  test "personal scope totals personal plus shares" do
+  test "personal scope totals what the user paid, adjusted by settlements" do
     result = GetBalanceTool.new(users(:manu)).execute(period: "month")
-    assert_equal 8000.0, result[:total_spent_ars]
+    assert_equal 11_000.0, result[:total_spent_ars]
+    assert_equal 11_000.0, result[:paid_ars]
+    assert_equal 0.0, result[:settlements_net_ars]
     comida = result[:by_category].find { |c| c[:category] == "Comida" }
-    assert_equal 7000.0, comida[:total]
+    assert_equal 11_000.0, comida[:total]
+    assert_equal 2, result[:transaction_count]
   end
 
   test "shared scope includes group totals and debts" do

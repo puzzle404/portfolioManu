@@ -51,7 +51,7 @@
         <% else %>
           <% @debts.each do |debt| %>
             <div class="total-amount">
-              <%= debt[:from].display_name %> le debe $<%= number_with_delimiter(debt[:amount_ars].round, delimiter: ".") %> a <%= debt[:to].display_name %>
+              <%= debt[:from].display_name %> le debe $<%= money(debt[:amount_ars]) %> a <%= debt[:to].display_name %>
             </div>
           <% end %>
         <% end %>
@@ -73,19 +73,15 @@
       <div class="finance-expense-list">
         <% @shared_expenses.each do |expense| %>
           <div class="finance-expense-row">
-            <div class="expense-row-icon"><i class="fas <%= expense.category.icon %>"></i></div>
+            <div class="expense-row-icon expense-row-icon--shared"><i class="fas <%= expense.category.icon %>"></i></div>
             <div class="expense-row-info">
               <div class="expense-row-desc"><%= expense.description %></div>
-              <div class="expense-row-meta">
-                Pago <%= expense.payer&.display_name %> ·
-                <% expense.shares.each do |share| %>
-                  <%= share.user.display_name %> $<%= number_with_delimiter(share.amount_ars.round, delimiter: ".") %>
-                <% end %>
-              </div>
+              <div class="expense-row-meta"><%= expense.category.name %> · <%= expense.expense_type == "fijo" ? "Fijo" : "Variable" %></div>
+              <%= render "finance/expenses/split_detail", expense: expense %>
             </div>
             <div class="expense-row-right">
               <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
-              <div class="expense-row-amount"><span class="expense-amount">$<%= number_with_delimiter(expense.amount_ars&.round, delimiter: ".") %></span></div>
+              <div class="expense-row-amount"><span class="expense-amount">$<%= money(expense.amount_ars) %></span></div>
             </div>
           </div>
         <% end %>
@@ -98,7 +94,7 @@
             </div>
             <div class="expense-row-right">
               <div class="expense-row-date"><%= settlement.settled_on.strftime("%d/%m") %></div>
-              <div class="expense-row-amount"><span class="expense-amount">$<%= number_with_delimiter(settlement.amount_ars.round, delimiter: ".") %></span></div>
+              <div class="expense-row-amount"><span class="expense-amount">$<%= money(settlement.amount_ars) %></span></div>
             </div>
           </div>
         <% end %>

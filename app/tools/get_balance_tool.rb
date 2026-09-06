@@ -1,11 +1,13 @@
 class GetBalanceTool < RubyLLM::Tool
   description "Gets a summary of spending by category for a given period. " \
               "Use this when the user asks for a balance, summary, totals, or category breakdown. " \
-              "All totals are in ARS. scope='shared' returns the shared-space totals plus who owes whom."
+              "All totals are in ARS. Personal scope = what the user paid, adjusted by settlements with the partner " \
+              "(paid_ars, settlements_net_ars, total_spent_ars). scope='shared' returns the shared-space totals " \
+              "plus who owes whom."
 
   param :period, desc: "Time period: 'week', 'month', 'year'", required: false
   param :expense_type, desc: "Filter by type: 'fijo' or 'variable'. Optional, shows all if omitted.", required: false
-  param :scope, desc: "'personal' (default: my expenses plus my share of shared ones) or 'shared' (shared space).",
+  param :scope, desc: "'personal' (default: what the user paid, adjusted by settlements) or 'shared' (shared space).",
                 required: false
 
   def initialize(user)
@@ -25,10 +27,14 @@ class GetBalanceTool < RubyLLM::Tool
     {
       period: "#{dates[:start]} a #{dates[:end]}",
       scope: "personal",
-      total_spent_ars: query.total_ars.to_f,
-      transaction_count: visible_count(dates, expense_type),
+      transaction_count: paid_count(dates, expense_type),
       by_category: category_breakdown(query.by_category)
-    }
+    }.merge(personal_totals(query))
+  end
+
+  def personal_totals(query)
+    { total_spent_ars: query.total_ars.to_f, paid_ars: query.expenses_total_ars.to_f,
+      settlements_net_ars: query.settlements_net_ars.to_f }
   end
 
   def shared_balance(dates, expense_type)
@@ -49,8 +55,8 @@ class GetBalanceTool < RubyLLM::Tool
     expense_type.present? ? expenses.for_expense_type(expense_type) : expenses
   end
 
-  def visible_count(dates, expense_type)
-    scope = Finance::Expense.visible_to(@user).for_period(dates[:start], dates[:end])
+  def paid_count(dates, expense_type)
+    scope = Finance::Expense.paid_by(@user).for_period(dates[:start], dates[:end])
     scope = scope.for_expense_type(expense_type) if expense_type.present?
     scope.count
   end

@@ -27,6 +27,8 @@ module Finance
     scope :recent, -> { order(expense_date: :desc, created_at: :desc) }
     scope :personal, -> { where(group_id: nil) }
     scope :in_group, ->(group) { where(group_id: group.id) }
+    # Expenses the user paid. Rows created before payer_id existed (nil) belong to whoever registered them.
+    scope :paid_by, ->(user) { where(payer_id: user.id).or(where(payer_id: nil, user_id: user.id)) }
 
     # Personal expenses the user registered, plus shared expenses they paid or have a share in.
     scope :visible_to, lambda { |user|
