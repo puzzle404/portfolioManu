@@ -42,5 +42,28 @@ module Finance
       expense.payer = users(:stranger)
       assert_not expense.valid?
     end
+
+    test "share_with! sets group, payer and equal shares" do
+      expense = finance_expenses(:legacy_nafta)
+      expense.share_with!(finance_groups(:pareja), payer: users(:manu))
+      assert expense.reload.shared?
+      assert_equal users(:manu), expense.payer
+      assert_equal BigDecimal("1500"), expense.amount_ars_for(users(:novia))
+    end
+
+    test "unshare! clears group and shares" do
+      expense = finance_expenses(:super_compartido)
+      expense.unshare!
+      assert_not expense.reload.shared?
+      assert_equal 0, expense.shares.count
+      assert_equal BigDecimal("8000"), expense.amount_ars_for(users(:manu))
+    end
+
+    test "updating amount of a shared expense rebalances shares keeping proportions" do
+      expense = finance_expenses(:super_compartido)
+      expense.update!(amount: 10_000)
+      assert_equal BigDecimal("5000"), expense.reload.amount_ars_for(users(:manu))
+      assert_equal BigDecimal("5000"), expense.amount_ars_for(users(:novia))
+    end
   end
 end

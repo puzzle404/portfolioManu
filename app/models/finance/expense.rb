@@ -19,6 +19,7 @@ module Finance
     validate :payer_belongs_to_group, if: :shared?
 
     before_validation :compute_amount_ars
+    after_update :rebalance_shares!, if: -> { shared? && (saved_change_to_amount? || saved_change_to_amount_ars?) }
 
     scope :for_period, ->(start_date, end_date) { where(expense_date: start_date..end_date) }
     scope :for_category, ->(category_id) { where(finance_category_id: category_id) }
@@ -56,6 +57,34 @@ module Finance
         rows.each { |row| shares.create!(user: row[:user], amount: row[:amount], amount_ars: row[:amount_ars]) }
       end
       shares.reset
+    end
+
+    # rows: optional precomputed rows; defaults to equal split among group members.
+    def share_with!(group, payer:, rows: nil)
+      transaction do
+        update!(group: group, payer: payer)
+        assign_shares!(rows || Finance::SplitCalculator.equal(self, group.members.to_a))
+      end
+    end
+
+    def unshare!
+      transaction do
+        shares.destroy_all
+        update!(group: nil)
+      end
+      shares.reset
+    end
+
+    # Recomputes shares after the total changed, preserving each member's proportion.
+    def rebalance_shares!
+      current = shares.to_a
+      return if current.empty?
+
+      previous_total = current.sum(&:amount)
+      return if previous_total.zero?
+
+      percents = current.each_with_object({}) { |share, acc| acc[share.user] = share.amount * 100 / previous_total }
+      assign_shares!(Finance::SplitCalculator.by_percent(self, percents))
     end
 
     private
