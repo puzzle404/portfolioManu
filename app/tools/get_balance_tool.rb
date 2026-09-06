@@ -22,44 +22,55 @@ class GetBalanceTool < RubyLLM::Tool
   def personal_balance(dates, expense_type)
     query = Finance::SpendingQuery.new(@user, start_date: dates[:start], end_date: dates[:end],
                                               expense_type: expense_type)
-    by_category = query.by_category.map { |cat_id, total| category_row(cat_id, total) }
-    personal_count = Finance::Expense.visible_to(@user).for_period(dates[:start], dates[:end])
-    personal_count = personal_count.for_expense_type(expense_type) if expense_type.present?
-
     {
       period: "#{dates[:start]} a #{dates[:end]}",
       scope: "personal",
       total_spent_ars: query.total_ars.to_f,
-      transaction_count: personal_count.count,
-      by_category: by_category.sort_by { |c| -c[:total] }
+      transaction_count: visible_count(dates, expense_type),
+      by_category: category_breakdown(query.by_category)
     }
   end
 
   def shared_balance(dates, expense_type)
-    group = @user.shared_group
-    if group.nil?
-      return { status: "error", message: "No tenes un espacio compartido. Crealo o unite desde /finance/shared." }
-    end
-
-    expenses = Finance::Expense.in_group(group).for_period(dates[:start], dates[:end])
-    expenses = expenses.for_expense_type(expense_type) if expense_type.present?
-    by_category = expenses.group(:finance_category_id).sum(:amount_ars)
-                          .map { |cat_id, total| category_row(cat_id, total) }
-
+    group = @user.shared_group or return missing_group_error
+    expenses = shared_expenses(group, dates, expense_type)
     {
       period: "#{dates[:start]} a #{dates[:end]}",
       scope: "shared",
       total_spent_ars: expenses.sum(:amount_ars).to_f,
       transaction_count: expenses.count,
-      by_category: by_category.sort_by { |c| -c[:total] },
-      debts: Finance::GroupBalance.new(group).debts.map do |debt|
-        { from: debt[:from].display_name, to: debt[:to].display_name, amount_ars: debt[:amount_ars].to_f }
-      end
+      by_category: category_breakdown(expenses.group(:finance_category_id).sum(:amount_ars)),
+      debts: format_debts(group)
     }
+  end
+
+  def shared_expenses(group, dates, expense_type)
+    expenses = Finance::Expense.in_group(group).for_period(dates[:start], dates[:end])
+    expense_type.present? ? expenses.for_expense_type(expense_type) : expenses
+  end
+
+  def visible_count(dates, expense_type)
+    scope = Finance::Expense.visible_to(@user).for_period(dates[:start], dates[:end])
+    scope = scope.for_expense_type(expense_type) if expense_type.present?
+    scope.count
+  end
+
+  def category_breakdown(rows)
+    rows.map { |cat_id, total| category_row(cat_id, total) }.sort_by { |c| -c[:total] }
+  end
+
+  def format_debts(group)
+    Finance::GroupBalance.new(group).debts.map do |debt|
+      { from: debt[:from].display_name, to: debt[:to].display_name, amount_ars: debt[:amount_ars].to_f }
+    end
   end
 
   def category_row(cat_id, total)
     cat = Finance::Category.find(cat_id)
     { category: cat.name, total: total.to_f, icon: cat.icon }
+  end
+
+  def missing_group_error
+    { status: "error", message: "No tenes un espacio compartido. Crealo o unite desde /finance/shared." }
   end
 end
