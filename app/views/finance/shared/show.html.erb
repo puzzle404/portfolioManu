@@ -57,7 +57,7 @@
           <%= form_with url: finance_settlements_path, method: :post, class: "d-flex gap-2 align-items-center" do %>
             <span class="small">Saldar</span>
             <input type="number" step="0.01" min="0.01" name="settlement[amount_ars]" class="form-control form-control-sm"
-                   value="<%= @suggested_settlement[:amount_ars] %>">
+                   value="<%= number_with_precision(@suggested_settlement[:amount_ars], precision: 2) %>">
             <button type="submit" class="btn btn-sm btn-success">Le pague a <%= @partner.display_name %></button>
           <% end %>
         </div>

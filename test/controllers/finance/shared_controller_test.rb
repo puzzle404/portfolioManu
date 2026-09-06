@@ -24,6 +24,12 @@ module Finance
       assert_select "body", /3\.000/
     end
 
+    test "show prefills the settle form for the debtor" do
+      sign_in users(:novia)
+      get finance_shared_path
+      assert_select "input[name='settlement[amount_ars]'][value=?]", "3000.00"
+    end
+
     test "create builds a group with the user as owner and member" do
       sign_in users(:stranger)
       assert_difference("Finance::Group.count", 1) { post finance_shared_path }
