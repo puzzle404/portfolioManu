@@ -174,7 +174,7 @@
                   <i class="fas <%= expense.expense_type == 'fijo' ? 'fa-thumbtack' : 'fa-arrows-rotate' %>"></i>
                 </button>
               <% end %>
-              <% if current_user.shared_group&.full? %>
+              <% if current_user.shared_group&.full? && expense.user_id == current_user.id %>
                 <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
                               category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
                               method: :patch do %>

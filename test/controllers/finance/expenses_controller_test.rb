@@ -68,5 +68,20 @@ module Finance
       assert flash[:alert].present?
       assert_not expense.reload.shared?
     end
+    test "partner cannot unshare an expense they did not register" do
+      sign_in users(:novia)
+      patch finance_expense_path(finance_expenses(:super_compartido)), params: { expense: { shared: "0" } }
+      assert_match(/solo quien cargo el gasto/i, flash[:alert])
+      assert finance_expenses(:super_compartido).reload.shared?
+    end
+
+    test "sharing toggle is only rendered for the user who registered the expense" do
+      sign_in users(:novia)
+      get finance_expenses_path
+      assert_select "form input[name='expense[shared]'][value='0']", count: 1 # luz, registered by novia
+      sign_in users(:manu)
+      get finance_expenses_path
+      assert_select "form input[name='expense[shared]']", count: 2 # legacy_nafta (share) + super (unshare)
+    end
   end
 end

@@ -78,6 +78,10 @@ module Finance
       shared_param = params.dig(:expense, :shared)
       return if shared_param.nil?
 
+      unless @expense.user_id == current_user.id
+        raise ArgumentError, "Solo quien cargo el gasto puede cambiar si es compartido"
+      end
+
       ActiveModel::Type::Boolean.new.cast(shared_param) ? enable_sharing : disable_sharing
     end
 
