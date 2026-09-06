@@ -88,5 +88,40 @@ module Finance
       assert_redirected_to finance_shared_path
       assert_match(/no se pudo completar/i, flash[:alert])
     end
+    test "show without partner explains the flow and offers to leave" do
+      owner = User.create!(email: "solo@example.com", password: "password123", name: "Solo")
+      Finance::Group.create!(owner: owner)
+      sign_in owner
+      get finance_shared_path
+      assert_response :success
+      assert_select "body", /Tu pareja tiene que registrarse/
+      assert_select "form[action=?][method=post]", finance_shared_path do
+        assert_select "input[name=_method][value=delete]"
+      end
+    end
+
+    test "destroy removes the space when the user is its only member" do
+      owner = User.create!(email: "solo@example.com", password: "password123", name: "Solo")
+      group = Finance::Group.create!(owner: owner)
+      sign_in owner
+      assert_difference("Finance::Group.count", -1) { delete finance_shared_path }
+      assert_redirected_to finance_shared_path
+      assert_not Finance::Group.exists?(group.id)
+      assert_nil owner.reload.shared_group
+    end
+
+    test "destroy is refused when the partner already joined" do
+      sign_in users(:manu)
+      assert_no_difference("Finance::Group.count") { delete finance_shared_path }
+      assert_redirected_to finance_shared_path
+      assert_match(/otra persona/i, flash[:alert])
+    end
+
+    test "destroy without a space redirects with alert" do
+      sign_in users(:stranger)
+      delete finance_shared_path
+      assert_redirected_to finance_shared_path
+      assert flash[:alert].present?
+    end
   end
 end

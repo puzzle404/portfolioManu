@@ -28,6 +28,17 @@ module Finance
       join_group(group)
     end
 
+    def destroy
+      group = current_user.shared_group
+      return redirect_to(finance_shared_path, alert: "No tenes un espacio compartido") if group.nil?
+      if group.full?
+        return redirect_to(finance_shared_path, alert: "No podes salir mientras haya otra persona en el espacio")
+      end
+
+      group.destroy!
+      redirect_to finance_shared_path, notice: "Saliste del espacio compartido"
+    end
+
     private
 
     def create_group_for_current_user

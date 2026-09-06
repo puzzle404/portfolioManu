@@ -14,7 +14,7 @@
   <% if @group.nil? %>
     <div class="finance-shared-card">
       <h5 class="mb-2">Compartir gastos</h5>
-      <p class="text-muted small">Crea un espacio y compartile el codigo a tu pareja, o unite con el codigo que te pasaron.</p>
+      <p class="text-muted small">Solo una persona crea el espacio y obtiene un codigo. La otra se registra en la app, entra a esta pantalla e ingresa ese codigo. Si ya te pasaron uno, usa "Unirme".</p>
       <%= button_to "Crear espacio compartido", finance_shared_path, method: :post, class: "btn btn-primary w-100 mb-3" %>
       <%= form_with url: join_finance_shared_path, method: :post, class: "d-flex gap-2" do %>
         <input type="text" name="invite_code" class="form-control text-uppercase" placeholder="Codigo" maxlength="8" required>
@@ -36,6 +36,11 @@
               onclick="navigator.clipboard.writeText('<%= @group.invite_code %>'); this.textContent = 'Copiado';">
         Copiar codigo
       </button>
+      <% unless @partner %>
+        <p class="text-muted small mt-3 mb-2">Tu pareja tiene que registrarse en la app, entrar a Compartido e ingresar este codigo. Cuando lo haga, aca vas a ver el balance entre los dos.</p>
+        <%= button_to "Salir del espacio", finance_shared_path, method: :delete, class: "btn btn-sm btn-outline-danger",
+                      form: { data: { turbo_confirm: "Vas a eliminar este espacio y su codigo. Continuar?" } } %>
+      <% end %>
     </div>
 
     <% if @partner %>

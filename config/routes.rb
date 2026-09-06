@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     end
     resources :expenses, only: [:index, :update, :destroy]
     resource :charts, only: [:show]
-    resource :shared, only: [:show, :create], controller: "shared" do
+    resource :shared, only: [:show, :create, :destroy], controller: "shared" do
       post :join
     end
     resources :settlements, only: [:create]
