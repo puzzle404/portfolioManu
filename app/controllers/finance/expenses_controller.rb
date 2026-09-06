@@ -9,24 +9,17 @@ module Finance
     end
 
     def update
-      @expense = current_user.finance_expenses.find(params[:id])
-      if @expense.update(expense_params)
-        redirect_to finance_expenses_path(period: params[:period], currency: params[:currency],
-                                          category: params[:category], search: params[:search],
-                                          expense_type: params[:filter_expense_type]),
-                    notice: "Gasto actualizado"
-      else
-        redirect_to finance_expenses_path, alert: "Error al actualizar: #{@expense.errors.full_messages.join(', ')}"
-      end
+      @expense = Finance::Expense.visible_to(current_user).find(params[:id])
+      apply_update
+      redirect_to finance_expenses_path(**filter_params), notice: "Gasto actualizado"
+    rescue ActiveRecord::RecordInvalid, ArgumentError => e
+      redirect_to finance_expenses_path(**filter_params), alert: "Error al actualizar: #{e.message}"
     end
 
     def destroy
-      @expense = current_user.finance_expenses.find(params[:id])
+      @expense = Finance::Expense.visible_to(current_user).find(params[:id])
       @expense.destroy
-      redirect_to finance_expenses_path(period: params[:period], currency: params[:currency],
-                                        category: params[:category], search: params[:search],
-                                        expense_type: params[:filter_expense_type]),
-                  notice: "Gasto eliminado"
+      redirect_to finance_expenses_path(**filter_params), notice: "Gasto eliminado"
     end
 
     private
@@ -73,8 +66,52 @@ module Finance
                                                expense_type: @expense_type_filter)
     end
 
+    def apply_update
+      Finance::Expense.transaction do
+        @expense.update!(expense_params) if expense_params.present?
+        apply_sharing_change
+        apply_my_share_change
+      end
+    end
+
+    def apply_sharing_change
+      shared_param = params.dig(:expense, :shared)
+      return if shared_param.nil?
+
+      ActiveModel::Type::Boolean.new.cast(shared_param) ? enable_sharing : disable_sharing
+    end
+
+    def enable_sharing
+      group = current_user.shared_group
+      raise ArgumentError, "No tenes un espacio compartido completo" if group.nil? || !group.full?
+
+      @expense.share_with!(group, payer: @expense.payer || current_user) unless @expense.shared?
+    end
+
+    def disable_sharing
+      @expense.unshare! if @expense.shared?
+    end
+
+    def apply_my_share_change
+      my_share = params.dig(:expense, :my_share_amount)
+      return if my_share.blank? || !@expense.shared?
+
+      mine = BigDecimal(my_share.to_s)
+      other = @expense.group.other_member(current_user)
+      raise ArgumentError, "Tu parte no puede superar el total" if mine > @expense.amount || mine.negative?
+
+      rows = Finance::SplitCalculator.by_amount(@expense, { current_user => mine, other => @expense.amount - mine })
+      @expense.assign_shares!(rows)
+    end
+
     def expense_params
-      params.require(:expense).permit(:description, :amount, :expense_type, :expense_date, :finance_category_id, :currency, :exchange_rate)
+      params.fetch(:expense, {}).permit(:description, :amount, :expense_type, :expense_date, :finance_category_id,
+                                        :currency, :exchange_rate)
+    end
+
+    def filter_params
+      { period: params[:period], currency: params[:currency], category: params[:category],
+        search: params[:search], expense_type: params[:filter_expense_type] }
     end
   end
 end
