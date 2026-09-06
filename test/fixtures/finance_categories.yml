@@ -1,0 +1,14 @@
+comida:
+  name: Comida
+  icon: fa-utensils
+  color: "#ef4444"
+
+servicios:
+  name: Servicios
+  icon: fa-bolt
+  color: "#f59e0b"
+
+otros:
+  name: Otros
+  icon: fa-ellipsis
+  color: "#6b7280"

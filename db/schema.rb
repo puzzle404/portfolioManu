@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_06_000002) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_06_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -100,6 +100,18 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000002) do
     t.index ["name"], name: "index_finance_categories_on_name", unique: true
   end
 
+  create_table "finance_expense_shares", force: :cascade do |t|
+    t.bigint "expense_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.decimal "amount_ars", precision: 12, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expense_id", "user_id"], name: "index_finance_expense_shares_on_expense_id_and_user_id", unique: true
+    t.index ["expense_id"], name: "index_finance_expense_shares_on_expense_id"
+    t.index ["user_id"], name: "index_finance_expense_shares_on_user_id"
+  end
+
   create_table "finance_expenses", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "finance_category_id", null: false
@@ -113,10 +125,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000002) do
     t.decimal "exchange_rate", precision: 10, scale: 4
     t.decimal "amount_ars", precision: 12, scale: 2
     t.string "expense_type", default: "variable", null: false
+    t.bigint "group_id"
+    t.bigint "payer_id"
     t.index ["expense_date"], name: "index_finance_expenses_on_expense_date"
     t.index ["expense_type"], name: "index_finance_expenses_on_expense_type"
     t.index ["finance_category_id"], name: "index_finance_expenses_on_finance_category_id"
+    t.index ["group_id"], name: "index_finance_expenses_on_group_id"
     t.index ["message_id"], name: "index_finance_expenses_on_message_id"
+    t.index ["payer_id"], name: "index_finance_expenses_on_payer_id"
     t.index ["user_id", "expense_date"], name: "index_finance_expenses_on_user_id_and_expense_date"
     t.index ["user_id"], name: "index_finance_expenses_on_user_id"
   end
@@ -369,9 +385,13 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000002) do
   add_foreign_key "chats", "users"
   add_foreign_key "experience_skills", "experiences"
   add_foreign_key "experience_skills", "skills"
+  add_foreign_key "finance_expense_shares", "finance_expenses", column: "expense_id"
+  add_foreign_key "finance_expense_shares", "users"
   add_foreign_key "finance_expenses", "finance_categories"
+  add_foreign_key "finance_expenses", "finance_groups", column: "group_id"
   add_foreign_key "finance_expenses", "messages"
   add_foreign_key "finance_expenses", "users"
+  add_foreign_key "finance_expenses", "users", column: "payer_id"
   add_foreign_key "finance_group_memberships", "finance_groups", column: "group_id"
   add_foreign_key "finance_group_memberships", "users"
   add_foreign_key "finance_groups", "users", column: "owner_id"

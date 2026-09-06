@@ -1,0 +1,23 @@
+super_manu:
+  expense: super_compartido
+  user: manu
+  amount: 4000
+  amount_ars: 4000
+
+super_novia:
+  expense: super_compartido
+  user: novia
+  amount: 4000
+  amount_ars: 4000
+
+luz_manu:
+  expense: luz_compartida_novia_pago
+  user: manu
+  amount: 1000
+  amount_ars: 1000
+
+luz_novia:
+  expense: luz_compartida_novia_pago
+  user: novia
+  amount: 1000
+  amount_ars: 1000
