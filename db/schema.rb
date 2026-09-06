@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_06_000001) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_06_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -119,6 +119,26 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000001) do
     t.index ["message_id"], name: "index_finance_expenses_on_message_id"
     t.index ["user_id", "expense_date"], name: "index_finance_expenses_on_user_id_and_expense_date"
     t.index ["user_id"], name: "index_finance_expenses_on_user_id"
+  end
+
+  create_table "finance_group_memberships", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "user_id"], name: "index_finance_group_memberships_on_group_id_and_user_id", unique: true
+    t.index ["group_id"], name: "index_finance_group_memberships_on_group_id"
+    t.index ["user_id"], name: "index_finance_group_memberships_on_user_id"
+  end
+
+  create_table "finance_groups", force: :cascade do |t|
+    t.string "name", default: "Compartido", null: false
+    t.string "invite_code", null: false
+    t.bigint "owner_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invite_code"], name: "index_finance_groups_on_invite_code", unique: true
+    t.index ["owner_id"], name: "index_finance_groups_on_owner_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -352,6 +372,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000001) do
   add_foreign_key "finance_expenses", "finance_categories"
   add_foreign_key "finance_expenses", "messages"
   add_foreign_key "finance_expenses", "users"
+  add_foreign_key "finance_group_memberships", "finance_groups", column: "group_id"
+  add_foreign_key "finance_group_memberships", "users"
+  add_foreign_key "finance_groups", "users", column: "owner_id"
   add_foreign_key "messages", "chats"
   add_foreign_key "messages", "models"
   add_foreign_key "messages", "tool_calls"
