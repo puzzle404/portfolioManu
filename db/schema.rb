@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_09_06_000003) do
+ActiveRecord::Schema[7.1].define(version: 2026_09_06_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -155,6 +155,22 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000003) do
     t.datetime "updated_at", null: false
     t.index ["invite_code"], name: "index_finance_groups_on_invite_code", unique: true
     t.index ["owner_id"], name: "index_finance_groups_on_owner_id"
+  end
+
+  create_table "finance_settlements", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "from_user_id", null: false
+    t.bigint "to_user_id", null: false
+    t.decimal "amount_ars", precision: 12, scale: 2, null: false
+    t.date "settled_on", null: false
+    t.string "description"
+    t.bigint "message_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["from_user_id"], name: "index_finance_settlements_on_from_user_id"
+    t.index ["group_id"], name: "index_finance_settlements_on_group_id"
+    t.index ["message_id"], name: "index_finance_settlements_on_message_id"
+    t.index ["to_user_id"], name: "index_finance_settlements_on_to_user_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -395,6 +411,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_09_06_000003) do
   add_foreign_key "finance_group_memberships", "finance_groups", column: "group_id"
   add_foreign_key "finance_group_memberships", "users"
   add_foreign_key "finance_groups", "users", column: "owner_id"
+  add_foreign_key "finance_settlements", "finance_groups", column: "group_id"
+  add_foreign_key "finance_settlements", "messages"
+  add_foreign_key "finance_settlements", "users", column: "from_user_id"
+  add_foreign_key "finance_settlements", "users", column: "to_user_id"
   add_foreign_key "messages", "chats"
   add_foreign_key "messages", "models"
   add_foreign_key "messages", "tool_calls"
