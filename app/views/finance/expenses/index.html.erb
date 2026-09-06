@@ -140,8 +140,10 @@
                 <%= form_with url: finance_expense_path(expense, period: @period, currency: @currency_filter,
                               category: @category_filter, search: @search, filter_expense_type: @expense_type_filter),
                               method: :patch, class: "expense-share-form mt-1" do %>
-                  <input type="number" step="0.01" min="0" max="<%= expense.amount %>" name="expense[my_share_amount]"
-                         value="<%= expense.share_for(current_user)&.amount %>" class="form-control form-control-sm">
+                  <input type="number" step="0.01" min="0" max="<%= number_with_precision(expense.amount, precision: 2) %>"
+                         name="expense[my_share_amount]"
+                         value="<%= number_with_precision(expense.share_for(current_user)&.amount, precision: 2) %>"
+                         class="form-control form-control-sm">
                   <button type="submit" class="expense-action-btn" title="Guardar mi parte"><i class="fas fa-check"></i></button>
                 <% end %>
               <% end %>

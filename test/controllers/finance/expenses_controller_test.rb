@@ -8,6 +8,7 @@ module Finance
       assert_response :success
       assert_select ".expense-shared-badge", minimum: 1
       assert_select "body", /8\.000/
+      assert_select "input[name='expense[my_share_amount]'][value=?][max=?]", "4000.00", "8000.00"
     end
 
     test "non member cannot update a shared expense" do
