@@ -41,5 +41,14 @@ module Finance
       by_type = query_for(users(:manu)).by_month_and_type
       assert_equal BigDecimal("1000"), by_type.find { |(k, type), _| k.to_date == month_key && type == "fijo" }&.last
     end
+
+    test "personal and share buckets merge into single keys of consistent types" do
+      query = query_for(users(:manu))
+      assert_equal 1, query.by_date.size
+      assert query.by_date.keys.all?(Date)
+      assert_equal 1, query.by_month.size
+      assert(query.by_month.keys.all? { |k| k.respond_to?(:to_date) })
+      assert_equal 2, query.by_month_and_type.size
+    end
   end
 end
