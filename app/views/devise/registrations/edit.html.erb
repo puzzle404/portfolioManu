@@ -32,6 +32,10 @@
 
 <h3>Cancel my account</h3>
 
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
+<% if current_user.shared_group.present? %>
+  <p class="text-muted">No podes eliminar tu cuenta mientras tengas un espacio compartido.</p>
+<% else %>
+  <div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
+<% end %>
 
 <%= link_to "Back", :back %>
