@@ -11,7 +11,7 @@ class GetBalanceTool < RubyLLM::Tool
   end
 
   def execute(period: "month", expense_type: nil)
-    dates = resolve_dates(period)
+    dates = Finance::PeriodResolver.call(period)
     expenses = @user.finance_expenses.for_period(dates[:start], dates[:end]).includes(:category)
     expenses = expenses.for_expense_type(expense_type) if expense_type.present?
 
@@ -26,16 +26,5 @@ class GetBalanceTool < RubyLLM::Tool
       transaction_count: expenses.count,
       by_category: by_category.sort_by { |c| -c[:total] }
     }
-  end
-
-  private
-
-  def resolve_dates(period)
-    case period
-    when "week"  then { start: Date.current.beginning_of_week, end: Date.current.end_of_week }
-    when "month" then { start: Date.current.beginning_of_month, end: Date.current.end_of_month }
-    when "year"  then { start: Date.current.beginning_of_year, end: Date.current.end_of_year }
-    else { start: Date.current.beginning_of_month, end: Date.current.end_of_month }
-    end
   end
 end

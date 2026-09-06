@@ -6,7 +6,7 @@ module Finance
       @category_filter = params[:category].presence
       @expense_type_filter = params[:expense_type].presence
 
-      dates = resolve_dates(@period, params[:start_date], params[:end_date])
+      dates = Finance::PeriodResolver.call(@period, start_date: params[:start_date], end_date: params[:end_date])
       @start_date = dates[:start]
       @end_date = dates[:end]
 
@@ -32,20 +32,6 @@ module Finance
     end
 
     private
-
-    def resolve_dates(period, start_date, end_date)
-      case period
-      when "today" then { start: Date.current, end: Date.current }
-      when "week"  then { start: Date.current.beginning_of_week, end: Date.current.end_of_week }
-      when "month" then { start: Date.current.beginning_of_month, end: Date.current.end_of_month }
-      when "year"  then { start: Date.current.beginning_of_year, end: Date.current.end_of_year }
-      when "custom"
-        s = start_date.present? ? Date.parse(start_date) : Date.current.beginning_of_month
-        e = end_date.present? ? Date.parse(end_date) : Date.current
-        { start: s, end: e }
-      else { start: Date.current.beginning_of_month, end: Date.current.end_of_month }
-      end
-    end
 
     def filtered_scope
       scope = current_user.finance_expenses

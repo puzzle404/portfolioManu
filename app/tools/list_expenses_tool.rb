@@ -13,7 +13,7 @@ class ListExpensesTool < RubyLLM::Tool
   end
 
   def execute(period: "month", start_date: nil, end_date: nil, category: nil, expense_type: nil)
-    dates = resolve_dates(period, start_date, end_date)
+    dates = Finance::PeriodResolver.call(period, start_date: start_date, end_date: end_date)
     expenses = @user.finance_expenses.for_period(dates[:start], dates[:end])
 
     if category.present?
@@ -38,20 +38,5 @@ class ListExpensesTool < RubyLLM::Tool
       count: expenses.count,
       expenses: items
     }
-  end
-
-  private
-
-  def resolve_dates(period, start_date, end_date)
-    case period
-    when "today" then { start: Date.current, end: Date.current }
-    when "week"  then { start: Date.current.beginning_of_week, end: Date.current.end_of_week }
-    when "month" then { start: Date.current.beginning_of_month, end: Date.current.end_of_month }
-    when "year"  then { start: Date.current.beginning_of_year, end: Date.current.end_of_year }
-    when "custom"
-      { start: Date.parse(start_date.to_s), end: Date.parse(end_date.to_s) }
-    else
-      { start: Date.current.beginning_of_month, end: Date.current.end_of_month }
-    end
   end
 end
