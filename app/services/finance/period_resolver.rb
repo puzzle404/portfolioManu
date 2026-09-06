@@ -13,10 +13,19 @@ module Finance
 
     def self.custom_range(start_date, end_date, today)
       {
-        start: start_date.present? ? Date.parse(start_date.to_s) : today.beginning_of_month,
-        end: end_date.present? ? Date.parse(end_date.to_s) : today
+        start: parse_date(start_date, today.beginning_of_month),
+        end: parse_date(end_date, today)
       }
     end
     private_class_method :custom_range
+
+    def self.parse_date(value, fallback)
+      return fallback if value.blank?
+
+      Date.parse(value.to_s)
+    rescue ArgumentError
+      fallback
+    end
+    private_class_method :parse_date
   end
 end

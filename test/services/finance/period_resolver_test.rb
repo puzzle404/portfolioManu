@@ -28,5 +28,15 @@ module Finance
       assert_equal Date.current.beginning_of_month, Finance::PeriodResolver.call("whatever")[:start]
       assert_equal Date.current.beginning_of_month, Finance::PeriodResolver.call(nil)[:start]
     end
+
+    test "custom with invalid start_date falls back to month start" do
+      range = Finance::PeriodResolver.call("custom", start_date: "not-a-date")
+      assert_equal Date.current.beginning_of_month, range[:start]
+    end
+
+    test "custom with invalid end_date falls back to today" do
+      range = Finance::PeriodResolver.call("custom", end_date: "garbage")
+      assert_equal Date.current, range[:end]
+    end
   end
 end

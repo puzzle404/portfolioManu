@@ -58,5 +58,15 @@ module Finance
       delete finance_expense_path(finance_expenses(:legacy_nafta))
       assert_response :not_found
     end
+
+    test "sharing a usd expense without exchange rate keeps it personal with an alert" do
+      sign_in users(:manu)
+      expense = Finance::Expense.create!(user: users(:manu), payer: users(:manu),
+                                         category: finance_categories(:comida), amount: 100, currency: "USD",
+                                         exchange_rate: nil, description: "Compra", expense_date: Date.current)
+      patch finance_expense_path(expense), params: { expense: { shared: "1" } }
+      assert flash[:alert].present?
+      assert_not expense.reload.shared?
+    end
   end
 end

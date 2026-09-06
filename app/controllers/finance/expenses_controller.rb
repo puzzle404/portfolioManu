@@ -84,6 +84,7 @@ module Finance
     def enable_sharing
       group = current_user.shared_group
       raise ArgumentError, "No tenes un espacio compartido completo" if group.nil? || !group.full?
+      raise ArgumentError, "No se puede compartir un gasto sin monto en pesos" if @expense.amount_ars.nil?
 
       @expense.share_with!(group, payer: @expense.payer || current_user) unless @expense.shared?
     end

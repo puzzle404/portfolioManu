@@ -54,7 +54,7 @@ class ListExpensesTool < RubyLLM::Tool
   def total_for(expenses, scope)
     # Ruby-level sum: expenses is eager-loaded with shares (has_many), and a SQL-level
     # sum(:amount_ars) here would double-count rows because of the join duplication.
-    return expenses.sum(&:amount_ars).to_f if scope == "shared"
+    return expenses.sum { |expense| expense.amount_ars || 0 }.to_f if scope == "shared"
 
     expenses.sum { |expense| expense.amount_ars_for(@user) }.to_f
   end

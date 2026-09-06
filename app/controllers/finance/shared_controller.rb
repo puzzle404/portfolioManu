@@ -15,8 +15,7 @@ module Finance
       if current_user.shared_group
         redirect_to finance_shared_path, alert: "Ya tenes un espacio compartido"
       else
-        Finance::Group.create!(owner: current_user)
-        redirect_to finance_shared_path, notice: "Espacio creado. Compartile el codigo a tu pareja."
+        create_group_for_current_user
       end
     end
 
@@ -26,8 +25,23 @@ module Finance
       return redirect_to(finance_shared_path, alert: "Ya tenes un espacio compartido") if current_user.shared_group
       return redirect_to(finance_shared_path, alert: "Ese espacio ya esta completo") if group.full?
 
+      join_group(group)
+    end
+
+    private
+
+    def create_group_for_current_user
+      Finance::Group.create!(owner: current_user)
+      redirect_to finance_shared_path, notice: "Espacio creado. Compartile el codigo a tu pareja."
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+      redirect_to finance_shared_path, alert: "No se pudo completar, intenta de nuevo"
+    end
+
+    def join_group(group)
       group.add_member!(current_user)
       redirect_to finance_shared_path, notice: "Te uniste al espacio de #{group.owner.display_name}"
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+      redirect_to finance_shared_path, alert: "No se pudo completar, intenta de nuevo"
     end
   end
 end

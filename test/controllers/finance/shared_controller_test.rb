@@ -1,4 +1,5 @@
 require "test_helper"
+require "minitest/mock"
 
 module Finance
   class SharedControllerTest < ActionDispatch::IntegrationTest
@@ -64,6 +65,28 @@ module Finance
       post join_finance_shared_path, params: { invite_code: "ABCD1234" }
       assert_not finance_groups(:pareja).member?(users(:stranger))
       assert_match(/completo/i, flash[:alert])
+    end
+
+    test "create redirects with alert when a race causes group creation to fail" do
+      sign_in users(:stranger)
+      Finance::Group.stub(:create!, ->(*) { raise ActiveRecord::RecordNotUnique, "boom" }) do
+        post finance_shared_path
+      end
+      assert_redirected_to finance_shared_path
+      assert_match(/no se pudo completar/i, flash[:alert])
+    end
+
+    test "join redirects with alert when a race causes membership creation to fail" do
+      owner = User.create!(email: "owner@example.com", password: "password123", name: "Owner")
+      group = Finance::Group.create!(owner: owner)
+      sign_in users(:stranger)
+      group.stub(:add_member!, ->(*) { raise ActiveRecord::RecordInvalid, group }) do
+        Finance::Group.stub(:find_by, group) do
+          post join_finance_shared_path, params: { invite_code: group.invite_code }
+        end
+      end
+      assert_redirected_to finance_shared_path
+      assert_match(/no se pudo completar/i, flash[:alert])
     end
   end
 end
