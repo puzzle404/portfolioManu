@@ -29,7 +29,7 @@ module Finance
     end
 
     def add_member!(user)
-      memberships.create!(user: user)
+      with_lock { memberships.create!(user: user) }
     end
 
     private

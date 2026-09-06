@@ -1,4 +1,5 @@
 require "test_helper"
+require "minitest/mock"
 
 module Finance
   class GroupTest < ActiveSupport::TestCase
@@ -29,6 +30,19 @@ module Finance
     test "user.shared_group returns the group" do
       assert_equal finance_groups(:pareja), users(:manu).shared_group
       assert_nil users(:stranger).shared_group
+    end
+
+    test "add_member! locks the group row while creating the membership" do
+      group = Finance::Group.create!(owner: users(:stranger))
+      newcomer = User.create!(email: "lock@example.com", password: "password123", name: "Lock")
+      locked = false
+      lock_stub = lambda do |&block|
+        locked = true
+        block.call
+      end
+      group.stub(:with_lock, lock_stub) { group.add_member!(newcomer) }
+      assert locked
+      assert group.member?(newcomer)
     end
   end
 end
