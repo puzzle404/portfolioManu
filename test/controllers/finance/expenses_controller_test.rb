@@ -6,7 +6,8 @@ module Finance
       sign_in users(:manu)
       get finance_expenses_path
       assert_response :success
-      assert_select ".expense-shared-badge", minimum: 1
+      assert_select ".expense-split .split-bar-fill[style*=?]", "width: 50%", minimum: 1
+      assert_select ".expense-split-legend", /vos \$4\.000/
       assert_select "body", /8\.000/
       assert_select "input[name='expense[my_share_amount]'][value=?][max=?]", "4000.00", "8000.00"
     end
