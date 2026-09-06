@@ -1,0 +1,36 @@
+<%# Split bar + legend + "adjust my share" editor for a shared expense. Renders for the current user. %>
+<% partner = expense.group.other_member(current_user) %>
+<% my_share = expense.amount_ars_for(current_user) %>
+<% partner_share = partner ? expense.amount_ars_for(partner) : 0 %>
+<% total = expense.amount_ars.to_f %>
+<% my_percent = total.positive? ? (my_share.to_f / total * 100).round : 50 %>
+<% i_paid = expense.payer_id == current_user.id %>
+<div class="expense-split">
+  <div class="expense-split-track">
+    <span class="split-avatar split-avatar--me <%= 'split-avatar--payer' if i_paid %>"
+          title="Vos<%= ' (pagaste)' if i_paid %>"><%= current_user.display_name.first.upcase %></span>
+    <% if i_paid %><span class="split-paid">pagaste</span><% end %>
+    <div class="split-bar" role="img" aria-label="Tu parte <%= my_percent %>%">
+      <div class="split-bar-fill" style="width: <%= my_percent %>%"></div>
+    </div>
+    <% unless i_paid %><span class="split-paid">pago</span><% end %>
+    <span class="split-avatar split-avatar--partner <%= 'split-avatar--payer' unless i_paid %>"
+          title="<%= partner&.display_name %><%= ' (pago)' unless i_paid %>"><%= partner&.display_name&.first&.upcase %></span>
+  </div>
+  <div class="expense-split-legend">
+    <span class="split-legend-me">vos $<%= money(my_share) %></span>
+    <span class="split-legend-partner"><span class="split-name"><%= partner&.display_name %></span> $<%= money(partner_share) %></span>
+  </div>
+  <% if expense.currency == "ARS" %>
+    <details class="expense-split-edit">
+      <summary>ajustar mi parte</summary>
+      <%= form_with url: finance_expense_path(expense), method: :patch do %>
+        <input type="hidden" name="return_to" value="shared">
+        <input type="number" step="0.01" min="0" max="<%= number_with_precision(expense.amount, precision: 2) %>"
+               name="expense[my_share_amount]" aria-label="Tu parte en pesos"
+               value="<%= number_with_precision(expense.share_for(current_user)&.amount, precision: 2) %>">
+        <button type="submit" aria-label="Guardar mi parte" title="Guardar mi parte"><i class="fas fa-check"></i></button>
+      <% end %>
+    </details>
+  <% end %>
+</div>

@@ -1,0 +1,45 @@
+# A legacy row with no payer and no group mirrors production data created before this feature.
+legacy_nafta:
+  user: manu
+  category: comida
+  amount: 3000
+  amount_ars: 3000
+  currency: ARS
+  description: Nafta
+  expense_type: variable
+  expense_date: <%= Date.current %>
+
+super_compartido:
+  user: manu
+  payer: manu
+  group: pareja
+  category: comida
+  amount: 8000
+  amount_ars: 8000
+  currency: ARS
+  description: Super
+  expense_type: variable
+  expense_date: <%= Date.current %>
+
+novia_cafe:
+  user: novia
+  payer: novia
+  category: comida
+  amount: 500
+  amount_ars: 500
+  currency: ARS
+  description: Cafe
+  expense_type: variable
+  expense_date: <%= Date.current %>
+
+luz_compartida_novia_pago:
+  user: novia
+  payer: novia
+  group: pareja
+  category: servicios
+  amount: 2000
+  amount_ars: 2000
+  currency: ARS
+  description: Luz
+  expense_type: fijo
+  expense_date: <%= Date.current %>

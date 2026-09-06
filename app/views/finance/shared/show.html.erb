@@ -1,0 +1,107 @@
+<% content_for(:finance_title) do %>
+  <i class="fas fa-user-friends me-1"></i> Compartido
+<% end %>
+<% content_for(:finance_nav_actions) do %>
+  <%= link_to finance_expenses_path, class: "finance-nav-btn", title: "Gastos" do %>
+    <i class="fas fa-receipt"></i>
+  <% end %>
+  <%= link_to finance_root_path, class: "finance-nav-btn", title: "Volver al chat" do %>
+    <i class="fas fa-comment-dots"></i>
+  <% end %>
+<% end %>
+
+<div class="finance-expenses-page">
+  <% if @group.nil? %>
+    <div class="finance-shared-card">
+      <h5 class="mb-2">Compartir gastos</h5>
+      <p class="text-muted small">Solo una persona crea el espacio y obtiene un codigo. La otra se registra en la app, entra a esta pantalla e ingresa ese codigo. Si ya te pasaron uno, usa "Unirme".</p>
+      <%= button_to "Crear espacio compartido", finance_shared_path, method: :post, class: "btn btn-primary w-100 mb-3" %>
+      <%= form_with url: join_finance_shared_path, method: :post, class: "d-flex gap-2" do %>
+        <input type="text" name="invite_code" class="form-control text-uppercase" placeholder="Codigo" maxlength="8" required>
+        <button type="submit" class="btn btn-outline-light">Unirme</button>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="finance-shared-card">
+      <% if @partner %>
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <i class="fas fa-user-friends"></i>
+          <span>Compartido con <strong><%= @partner.display_name %></strong></span>
+        </div>
+      <% else %>
+        <p class="mb-1">Todavia nadie se unio. Compartile este codigo:</p>
+      <% end %>
+      <div class="finance-invite-code" id="invite_code"><%= @group.invite_code %></div>
+      <button type="button" class="btn btn-sm btn-outline-light mt-2"
+              onclick="navigator.clipboard.writeText('<%= @group.invite_code %>'); this.textContent = 'Copiado';">
+        Copiar codigo
+      </button>
+      <% unless @partner %>
+        <p class="text-muted small mt-3 mb-2">Tu pareja tiene que registrarse en la app, entrar a Compartido e ingresar este codigo. Cuando lo haga, aca vas a ver el balance entre los dos.</p>
+        <%= button_to "Salir del espacio", finance_shared_path, method: :delete, class: "btn btn-sm btn-outline-danger",
+                      form: { data: { turbo_confirm: "Vas a eliminar este espacio y su codigo. Continuar?" } } %>
+      <% end %>
+    </div>
+
+    <% if @partner %>
+      <div class="finance-expenses-total">
+        <div class="total-label">Balance</div>
+        <% if @debts.empty? %>
+          <div class="total-amount">Estan a mano</div>
+        <% else %>
+          <% @debts.each do |debt| %>
+            <div class="total-amount">
+              <%= debt[:from].display_name %> le debe $<%= money(debt[:amount_ars]) %> a <%= debt[:to].display_name %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @suggested_settlement %>
+        <div class="finance-shared-card">
+          <%= form_with url: finance_settlements_path, method: :post, class: "d-flex gap-2 align-items-center" do %>
+            <span class="small">Saldar</span>
+            <input type="number" step="0.01" min="0.01" name="settlement[amount_ars]" class="form-control form-control-sm"
+                   value="<%= number_with_precision(@suggested_settlement[:amount_ars], precision: 2) %>">
+            <button type="submit" class="btn btn-sm btn-success">Le pague a <%= @partner.display_name %></button>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="finance-expenses-scroll">
+      <div class="finance-expense-list">
+        <% @shared_expenses.each do |expense| %>
+          <div class="finance-expense-row">
+            <div class="expense-row-icon expense-row-icon--shared"><i class="fas <%= expense.category.icon %>"></i></div>
+            <div class="expense-row-info">
+              <div class="expense-row-desc"><%= expense.description %></div>
+              <div class="expense-row-meta"><%= expense.category.name %> · <%= expense.expense_type == "fijo" ? "Fijo" : "Variable" %></div>
+              <%= render "finance/expenses/split_detail", expense: expense %>
+            </div>
+            <div class="expense-row-right">
+              <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
+              <div class="expense-row-amount"><span class="expense-amount">$<%= money(expense.amount_ars) %></span></div>
+            </div>
+          </div>
+        <% end %>
+        <% @settlements.each do |settlement| %>
+          <div class="finance-expense-row finance-settlement-row">
+            <div class="expense-row-icon"><i class="fas fa-money-bill-transfer"></i></div>
+            <div class="expense-row-info">
+              <div class="expense-row-desc"><%= settlement.from_user.display_name %> le pago a <%= settlement.to_user.display_name %></div>
+              <div class="expense-row-meta"><%= settlement.description.presence || "Pago de deuda" %></div>
+            </div>
+            <div class="expense-row-right">
+              <div class="expense-row-date"><%= settlement.settled_on.strftime("%d/%m") %></div>
+              <div class="expense-row-amount"><span class="expense-amount">$<%= money(settlement.amount_ars) %></span></div>
+            </div>
+          </div>
+        <% end %>
+        <% if @shared_expenses.empty? && @settlements.empty? %>
+          <div class="text-center py-5 expense-empty"><i class="fas fa-inbox d-block mb-2"></i>Todavia no hay gastos compartidos</div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

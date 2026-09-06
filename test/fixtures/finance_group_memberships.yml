@@ -1,0 +1,7 @@
+manu_pareja:
+  group: pareja
+  user: manu
+
+novia_pareja:
+  group: pareja
+  user: novia

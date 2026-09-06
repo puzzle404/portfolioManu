@@ -4,12 +4,21 @@ require "rails/test_help"
 
 module ActiveSupport
   class TestCase
-    # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
-    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    fixtures :all
+    set_fixture_class finance_categories: "Finance::Category",
+                      finance_expenses: "Finance::Expense",
+                      finance_groups: "Finance::Group",
+                      finance_group_memberships: "Finance::GroupMembership",
+                      finance_expense_shares: "Finance::ExpenseShare",
+                      finance_settlements: "Finance::Settlement"
 
-    # Add more helper methods to be used by all tests here...
+    fixtures :all
+  end
+end
+
+module ActionDispatch
+  class IntegrationTest
+    include Devise::Test::IntegrationHelpers
   end
 end
