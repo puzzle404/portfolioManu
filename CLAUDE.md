@@ -29,6 +29,7 @@ rubocop -a                      # Auto-fix offenses
 
 # Tests
 rails test                      # Run test suite (Minitest + Capybara)
+rails test test/models/finance test/services/finance test/tools test/controllers/finance  # Finance suite only
 
 # Background jobs (Solid Queue)
 # Solid Queue runs via Puma plugin in production (see config/puma.rb)
@@ -66,6 +67,9 @@ Personal finance chat at `/finance`, protected by Devise login. WhatsApp-style i
 - **ruby_llm integration**: `Chat` model with `acts_as_chat`, `Message` with `acts_as_message`, `ToolCall` with `acts_as_tool_call`
 - **Tool calling**: AI parses natural language ("pagué 500 de luz") and calls `RegisterExpenseTool` to create `Finance::Expense` records automatically
 - **Tools** (`app/tools/`): `RegisterExpenseTool`, `ListExpensesTool`, `GetBalanceTool` - each initialized with `user` context
+- **Shared expenses**: `Finance::Group` (one per couple, `MAX_MEMBERS = 2`, invite code), `Finance::ExpenseShare` (per-member share, `amount`/`amount_ars`), `Finance::Settlement` (transfer between members). `Finance::Expense#group_id` nil = personal. "My spending" = personal at 100% + my shares (`Finance::SpendingQuery`, `Finance::Expense.visible_to(user)`). Balances via `Finance::GroupBalance`. Splits via `Finance::SplitCalculator`.
+- **Tools** also include `RegisterSettlementTool`; `RegisterExpenseTool` accepts `shared`, `my_percent`, `paid_by_other`; list/balance tools accept `scope: personal|shared`.
+- **Screens**: `/finance/shared` (create/join with code, balance, settle), `/finance/expenses` shows shared badge and lets you toggle sharing / edit your share.
 - **Job** (`app/jobs/finance/chat_response_job.rb`): Configures system prompt + tools, calls `chat.ask()`, broadcasts response via Turbo Streams
 - **Layout**: Separate mobile-first layout (`app/views/layouts/finance.html.erb`)
 - **PWA**: Installable via `public/manifest.json` + `public/service-worker.js`, start_url points to `/finance`
@@ -83,6 +87,7 @@ Personal finance chat at `/finance`, protected by Devise login. WhatsApp-style i
 - **ToolCall** (ruby_llm) - belongs_to Message, acts_as_tool_call
 - **Finance::Category** - predefined expense categories (10 defaults, table: finance_categories)
 - **Finance::Expense** - belongs_to User + Category + Message(optional), amount/description/date/currency
+- **Finance::Group / GroupMembership / ExpenseShare / Settlement** - shared expenses between two users (tables prefixed `finance_`)
 
 ### Routes
 
@@ -96,6 +101,8 @@ devise_for        users
 /letter_opener    -> development mail preview
 /finance          -> finance/chats#show (PWA chat, requires login)
 /finance/chat/messages -> finance/messages#create
+/finance/shared        -> finance/shared#show (create: POST, join: POST /finance/shared/join)
+/finance/settlements   -> finance/settlements#create
 ```
 
 ### Environment Variables
