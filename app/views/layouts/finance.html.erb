@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>ManuFinance</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -25,6 +25,17 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js');
       }
+      // Older Android browsers ignore 100dvh and size the page to 100vh, hiding the bottom
+      // input behind the browser toolbar. Measure the real visible height instead.
+      (function () {
+        var setAppHeight = function () {
+          var height = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+          document.documentElement.style.setProperty('--app-height', height + 'px');
+        };
+        setAppHeight();
+        window.addEventListener('resize', setAppHeight);
+        if (window.visualViewport) window.visualViewport.addEventListener('resize', setAppHeight);
+      })();
     </script>
   </body>
 </html>
