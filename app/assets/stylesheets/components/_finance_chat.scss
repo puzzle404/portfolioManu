@@ -1,10 +1,15 @@
+// The document height (100%) is the most reliable "visible height" across Android browsers:
+// 100vh includes the URL bar on many versions and dvh is not universally supported.
+.finance-html {
+  height: 100%;
+}
+
 .finance-body {
   background-color: rgba(15, 23, 42, 1);
   color: #ccd6f6;
   font-family: "Nunito", "Helvetica", sans-serif;
-  height: 100vh;
-  height: 100dvh;
-  height: var(--app-height, 100dvh);
+  height: 100%;
+  height: var(--app-height, 100%);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -38,6 +43,8 @@
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
+  // room for the fixed input bar (its height + safe area)
+  padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   -webkit-overflow-scrolling: touch;
 
   &::-webkit-scrollbar {
@@ -97,9 +104,15 @@
 }
 
 .finance-input-bar {
+  // Fixed to the bottom of the visible viewport: survives URL-bar and keyboard resizes on mobile.
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
   padding: 8px 12px;
   padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(15, 23, 42, 0.96);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 
   .input-group {
