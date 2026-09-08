@@ -83,7 +83,6 @@
               <div class="expense-row-date"><%= expense.expense_date.strftime("%d/%m") %></div>
               <div class="expense-row-amount"><span class="expense-amount">$<%= money(expense.amount_ars) %></span></div>
             </div>
-          </div>
             <div class="expense-row-actions">
               <%= form_with url: finance_expense_path(expense), method: :delete,
                             data: { turbo_confirm: "Eliminar este gasto compartido para los dos?" } do %>
@@ -93,6 +92,7 @@
                 </button>
               <% end %>
             </div>
+          </div>
         <% end %>
         <% @settlements.each do |settlement| %>
           <div class="finance-expense-row finance-settlement-row">
