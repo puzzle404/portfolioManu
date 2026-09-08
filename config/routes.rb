@@ -20,7 +20,7 @@ Rails.application.routes.draw do
     resource :shared, only: [:show, :create, :destroy], controller: "shared" do
       post :join
     end
-    resources :settlements, only: [:create]
+    resources :settlements, only: [:create, :destroy]
   end
   get "/finance", to: "finance/chats#show", as: :finance_root
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

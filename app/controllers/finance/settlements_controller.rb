@@ -13,6 +13,12 @@ module Finance
       end
     end
 
+    def destroy
+      settlement = Finance::Settlement.involving(current_user).find(params[:id])
+      settlement.destroy!
+      redirect_to finance_shared_path, notice: "Pago eliminado"
+    end
+
     private
 
     def build_settlement(group)

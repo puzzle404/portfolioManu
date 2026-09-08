@@ -84,6 +84,15 @@
               <div class="expense-row-amount"><span class="expense-amount">$<%= money(expense.amount_ars) %></span></div>
             </div>
           </div>
+            <div class="expense-row-actions">
+              <%= form_with url: finance_expense_path(expense), method: :delete,
+                            data: { turbo_confirm: "Eliminar este gasto compartido para los dos?" } do %>
+                <input type="hidden" name="return_to" value="shared">
+                <button type="submit" class="expense-action-btn expense-delete-btn" title="Eliminar gasto">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              <% end %>
+            </div>
         <% end %>
         <% @settlements.each do |settlement| %>
           <div class="finance-expense-row finance-settlement-row">
@@ -95,6 +104,14 @@
             <div class="expense-row-right">
               <div class="expense-row-date"><%= settlement.settled_on.strftime("%d/%m") %></div>
               <div class="expense-row-amount"><span class="expense-amount">$<%= money(settlement.amount_ars) %></span></div>
+            </div>
+            <div class="expense-row-actions">
+              <%= form_with url: finance_settlement_path(settlement), method: :delete,
+                            data: { turbo_confirm: "Eliminar este pago? El saldo entre los dos se recalcula." } do %>
+                <button type="submit" class="expense-action-btn expense-delete-btn" title="Eliminar pago">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              <% end %>
             </div>
           </div>
         <% end %>
