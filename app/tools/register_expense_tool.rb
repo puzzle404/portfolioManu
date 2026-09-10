@@ -26,8 +26,9 @@ class RegisterExpenseTool < RubyLLM::Tool
                      desc: "Only for shared expenses: percentage of the total the current user covers " \
                            "(e.g. 70 for 'yo pongo el 70%'). Default 50.", required: false
   param :paid_by_other, type: "boolean",
-                        desc: "Only for shared expenses: true if the OTHER person paid (e.g. 'lo pago Manu'). " \
-                              "Default false (current user paid).", required: false
+                        desc: "Only for shared expenses. true ONLY when the user explicitly says the PARTNER paid. " \
+                              "false when the user paid, when they name themselves, or when nobody is named " \
+                              "(default: the person registering the expense paid it).", required: false
 
   def initialize(user)
     @user = user

@@ -83,9 +83,11 @@ module Finance
 
       other = group.other_member(user)
       <<~SHARED
-        GASTOS COMPARTIDOS: el usuario se llama #{user.display_name} y comparte gastos con #{other.display_name}.
+        GASTOS COMPARTIDOS: estas hablando con #{user.display_name}. Su pareja es #{other.display_name}. Son las unicas dos personas del espacio compartido.
         - Si el usuario dice que un gasto es "compartido", "de la casa", "entre los dos", "mitad y mitad" o similar, usa register_expense con shared=true. Se divide 50/50 salvo que indique otra proporcion ("yo pongo el 70%" -> my_percent=70).
-        - Si dice que lo pago #{other.display_name} ("lo pago #{other.display_name}", "#{other.display_name} pago la luz"), usa paid_by_other=true.
+        - QUIEN PAGO: por defecto pago el usuario que esta escribiendo. Si no dice quien pago, pago el usuario -> paid_by_other=false. Si dice "pague", "pagado por mi", o usa su propio nombre o apodo (ej. "pagado por #{user.display_name}") -> paid_by_other=false. Cualquier nombre que NO sea #{other.display_name} se refiere al usuario mismo.
+        - Usa paid_by_other=true SOLO cuando nombre explicitamente a #{other.display_name} como quien pago ("lo pago #{other.display_name}", "#{other.display_name} pago la luz", "pagado por #{other.display_name}").
+        - Si en un mismo mensaje hay varios gastos con distintos pagadores, registra cada uno por separado con su propio paid_by_other.
         - Si dice que le transfirio o pago plata a #{other.display_name} ("le pase 3000 a #{other.display_name}"), usa register_settlement. Si #{other.display_name} le transfirio al usuario, usa received=true.
         - Para "como estamos", "cuanto le debo", "gastos compartidos del mes", usa get_balance o list_expenses con scope="shared".
         - Sin mencion de compartir, el gasto es personal (shared=false).
