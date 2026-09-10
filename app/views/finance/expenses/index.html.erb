@@ -144,7 +144,14 @@
                   <span class="expense-amount <%= 'expense-amount--credit' unless sent %>"><%= sent ? "" : "-" %>$<%= money(row.amount_ars) %></span>
                 </div>
               </div>
-              <div class="expense-row-actions"></div>
+              <div class="expense-row-actions">
+                <%= form_with url: finance_settlement_path(row), method: :delete,
+                              data: { turbo_confirm: "Eliminar este pago? El saldo entre los dos se recalcula." } do %>
+                  <button type="submit" class="expense-action-btn expense-delete-btn" title="Eliminar pago">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                <% end %>
+              </div>
             </div>
           <% else %>
             <% expense = row %>

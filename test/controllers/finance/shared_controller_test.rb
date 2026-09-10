@@ -127,5 +127,22 @@ module Finance
       assert_redirected_to finance_shared_path
       assert flash[:alert].present?
     end
+    test "shared screen offers delete for shared expenses and settlements to any member" do
+      Finance::Settlement.create!(group: finance_groups(:pareja), from_user: users(:novia), to_user: users(:manu),
+                                  amount_ars: 1000, settled_on: Date.current)
+      sign_in users(:novia)
+      get finance_shared_path
+      # super_compartido was registered and paid by manu; novia can still delete it from here
+      assert_select "form[action=?] input[name=_method][value=delete]", finance_expense_path(finance_expenses(:super_compartido))
+      assert_select "form[action^=?] input[name=_method][value=delete]", "/finance/settlements/"
+    end
+
+    test "partner can delete a shared expense from the shared screen and lands back there" do
+      sign_in users(:novia)
+      assert_difference("Finance::Expense.count", -1) do
+        delete finance_expense_path(finance_expenses(:super_compartido)), params: { return_to: "shared" }
+      end
+      assert_redirected_to finance_shared_path
+    end
   end
 end

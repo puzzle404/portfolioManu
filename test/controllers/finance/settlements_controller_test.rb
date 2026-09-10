@@ -27,5 +27,20 @@ module Finance
       post finance_settlements_path, params: { settlement: { amount_ars: "0" } }
       assert flash[:alert].present?
     end
+    test "a member can delete a settlement of their shared space" do
+      settlement = Finance::Settlement.create!(group: finance_groups(:pareja), from_user: users(:novia),
+                                               to_user: users(:manu), amount_ars: 3000, settled_on: Date.current)
+      sign_in users(:manu)
+      assert_difference("Finance::Settlement.count", -1) { delete finance_settlement_path(settlement) }
+      assert_redirected_to finance_shared_path
+    end
+
+    test "a non member cannot delete a settlement" do
+      settlement = Finance::Settlement.create!(group: finance_groups(:pareja), from_user: users(:novia),
+                                               to_user: users(:manu), amount_ars: 3000, settled_on: Date.current)
+      sign_in users(:stranger)
+      assert_no_difference("Finance::Settlement.count") { delete finance_settlement_path(settlement) }
+      assert_response :not_found
+    end
   end
 end
